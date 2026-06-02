@@ -1,0 +1,3 @@
+# 副業詐欺録 ads.txt
+# Google AdSense（3サイト同一アカウント運用：pub-6137725398672331）
+google.com, pub-6137725398672331, DIRECT, f08c47fec0942fa0

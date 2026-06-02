@@ -1,0 +1,88 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const personLD = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "白川",
+  "alternateName": "shira",
+  "description": "副業詐欺・情報商材・MLM・ロマンス商法など、副業を装った詐欺の実例を取材ベースで記録するアーカイブ『副業詐欺録』運営者。",
+  "url": "https://fukugyousagiroku.com/about/",
+  "sameAs": [
+    "https://kaidanroku.com/",
+    "https://toushishippairoku.com/",
+  ],
+  "jobTitle": "副業詐欺録 編集者・取材担当",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "副業詐欺録",
+    "url": "https://fukugyousagiroku.com/",
+  },
+  "knowsAbout": ["情報商材", "MLM", "コンサル詐欺", "AI副業", "ロマンス商法", "投資詐欺", "海外案件", "物販転売"],
+};
+---
+<BaseLayout
+  title="運営者情報"
+  description="副業詐欺録の運営者・白川について。情報商材・MLM・副業詐欺の実例アーカイブの編集方針・掲載基準・お問い合わせ。"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(personLD)} />
+  <section class="about">
+    <header class="about__head">
+      <span class="about__sub">ABOUT</span>
+      <h1 class="about__title">運営者情報</h1>
+    </header>
+
+    <h2>運営者</h2>
+    <p><strong>白川</strong>／40代男性／中部地方在住／元会社員。<br/>
+    副業を始めたいと考える知人・家族から「これって大丈夫？」と聞かれることが増え、自分なりに調べた手口・実例を整理してきた延長で本サイトを立ち上げた。怪談録・投資失敗録の姉妹サイトとして運営している。</p>
+
+    <h2>サイトの目的</h2>
+    <p>『副業詐欺録』は、情報商材・MLM・AI副業・コンサル詐欺・ロマンス商法など、副業を装った詐欺の実例を取材ベースで記録するアーカイブです。被害に遭う前の方、これから副業を探す方が、危険なパターンを事前に知ることで、被害を未然に防げる場所を目指しています。</p>
+
+    <h2>編集方針</h2>
+    <ul class="about__list">
+      <li>被害者本人にやり取りで取材し、編集の上で掲載する（無断転載・SNS拾いはしない）</li>
+      <li>投稿者の個人名・勤務先・特定可能情報は伏字で扱う</li>
+      <li>事業者・サービス名は、消費生活センター等の公的相談で言及可能な範囲のみ実名掲載する</li>
+      <li>「絶対稼げる」系の煽動、アフィリエイト誘導は一切しない</li>
+      <li>誇張せず、事実関係に基づいて記述する</li>
+    </ul>
+
+    <h2>投稿について</h2>
+    <p>副業詐欺・情報商材被害の体験談は、匿名フォームから受け付けています（現在準備中）。投稿いただいた内容は、本人とのやり取りで事実関係を確認したうえで掲載します。投稿者の個人情報は厳重に管理し、ご本人の同意を得た範囲のみを公開します。</p>
+
+    <h2>掲載の取り下げについて</h2>
+    <p>事業者の方で「事実と異なる」「不当な記載がある」と感じる場合は、お問い合わせフォームからご連絡ください。事実関係を再確認の上、必要に応じて記述を修正・削除いたします。</p>
+
+    <h2>免責事項</h2>
+    <p>本サイトに掲載されている情報は、被害発生時点での記録に基づきます。その後の事業者の対応・改善状況は反映されない場合があります。最新情報は各事業者・公的機関にご確認ください。</p>
+
+    <h2>姉妹サイト</h2>
+    <ul class="about__list">
+      <li><a href="https://kaidanroku.com" target="_blank" rel="noopener">怪談録</a>（運営：白川）── 実話・実体験ベースの怪談アーカイブ</li>
+      <li><a href="https://toushi-shippai-roku.pages.dev" target="_blank" rel="noopener">投資失敗録</a>（運営：白川）── FX・株・仮想通貨の損失記録</li>
+    </ul>
+
+    <h2>お問い合わせ</h2>
+    <p>準備中。当面は本ページの記載のみとなります。</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .about { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; color: var(--color-text); }
+  .about__head { text-align: center; margin-bottom: 40px; padding-bottom: 28px; border-bottom: 2px solid var(--color-text); }
+  .about__sub { display: inline-block; font-size: 0.7rem; letter-spacing: 0.55em; color: var(--color-accent); font-weight: 700; margin-bottom: 14px; }
+  .about__title { font-size: 2.2rem; font-weight: 900; letter-spacing: 0.1em; margin: 0; font-family: var(--font-serif); color: var(--color-text); }
+  .about h2 { font-size: 1.2rem; font-weight: 900; margin: 36px 0 14px; padding-left: 12px; border-left: 4px solid var(--color-accent); color: var(--color-text); font-family: var(--font-serif); letter-spacing: 0.04em; }
+  .about p { line-height: 2.05; font-size: 0.94rem; color: var(--color-text); margin: 0 0 14px; }
+  .about strong { color: var(--color-accent); }
+  .about__list { padding-left: 1.5em; margin: 0 0 14px; }
+  .about__list li { padding: 6px 0; line-height: 1.85; font-size: 0.9rem; color: var(--color-text-soft); }
+  .about a { color: var(--color-accent); }
+  .about a:hover { color: var(--color-text); }
+  @media (max-width: 540px) {
+    .about { padding: 40px 16px 60px; }
+    .about__title { font-size: 1.55rem; }
+    .about h2 { font-size: 1.05rem; }
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const CAT_LABELS: Record<string, string> = {
+  joho: "情報商材", mlm: "MLM", coach: "コンサル詐欺", ai: "AI副業",
+  invest: "投資型副業", romance: "ロマンス商法", busshu: "物販系", overseas: "海外案件",
+};
+
+const dir = path.join(process.cwd(), "approved");
+const items: any[] = [];
+if (fs.existsSync(dir)) {
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith(".json")) continue;
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"));
+      if (j.slug && j.title) {
+        items.push({
+          slug: j.slug,
+          title: j.title,
+          desc: j.description ?? "",
+          cat: CAT_LABELS[j.category] ?? j.category,
+          loss: j.loss_amount_yen ?? 0,
+          pref: j.persona?.prefecture ?? "",
+          age: j.persona?.age ?? "",
+        });
+      }
+    } catch {}
+  }
+}
+items.sort((a, b) => b.loss - a.loss);
+const itemsJson = JSON.stringify(items);
+---
+<BaseLayout title="記事検索" description="副業詐欺録の全取材記録から、キーワード・カテゴリ・地域で検索。">
+  <main class="search-page">
+    <header class="search-hero">
+      <span class="search-hero__sub">SEARCH</span>
+      <h1 class="search-hero__title">記事検索</h1>
+      <p class="search-hero__lead">タイトル・概要・地域・カテゴリで絞り込み（全{items.length}件）</p>
+    </header>
+
+    <div class="search-form">
+      <input type="search" id="q" placeholder="キーワード（例：LINE、ママ友、AI、暗号資産…）" />
+      <select id="cat">
+        <option value="">全カテゴリ</option>
+        {Object.values(CAT_LABELS).map((c) => <option value={c}>{c}</option>)}
+      </select>
+      <span class="search-form__count" id="count">{items.length}件</span>
+    </div>
+
+    <ul class="search-results" id="results"></ul>
+  </main>
+
+  <script is:inline define:vars={{ itemsJson }}>
+    const items = JSON.parse(itemsJson);
+    const $q = document.getElementById('q');
+    const $cat = document.getElementById('cat');
+    const $count = document.getElementById('count');
+    const $res = document.getElementById('results');
+
+    function fmt(yen) {
+      if (yen >= 1e8) return `${(yen/1e8).toFixed(1)}億円`;
+      return `¥${yen.toLocaleString()}-`;
+    }
+
+    function render(list) {
+      $count.textContent = `${list.length}件`;
+      $res.innerHTML = list.slice(0, 100).map(i => `
+        <li>
+          <a href="/articles/${i.slug}/">
+            <div class="search-results__head"><span class="search-results__cat">${i.cat}</span><span class="search-results__loss">${fmt(i.loss)}</span></div>
+            <h3>${i.title}</h3>
+            <div class="search-results__meta">${i.age}歳・${i.pref}</div>
+            ${i.desc ? `<p>${i.desc.slice(0, 100)}…</p>` : ''}
+          </a>
+        </li>
+      `).join('');
+    }
+
+    function filter() {
+      const q = $q.value.trim().toLowerCase();
+      const cat = $cat.value;
+      const filtered = items.filter(i => {
+        if (cat && i.cat !== cat) return false;
+        if (q && !`${i.title} ${i.desc} ${i.pref} ${i.cat}`.toLowerCase().includes(q)) return false;
+        return true;
+      });
+      render(filtered);
+    }
+    $q.addEventListener('input', filter);
+    $cat.addEventListener('change', filter);
+    render(items);
+
+    // URLパラメータで初期検索
+    const u = new URL(location.href);
+    if (u.searchParams.get('q')) { $q.value = u.searchParams.get('q'); filter(); }
+  </script>
+
+  <style>
+    .search-page { max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; font-family: var(--font-sans); }
+    .search-hero { padding: 24px 0 28px; border-bottom: 2px solid var(--color-text); margin-bottom: 28px; }
+    .search-hero__sub { display: inline-block; font-size: 0.7rem; letter-spacing: 0.45em; color: var(--color-accent); font-weight: 700; margin-bottom: 12px; }
+    .search-hero__title { font-size: 2.2rem; margin: 0 0 12px; font-family: var(--font-serif); font-weight: 900; color: var(--color-text); letter-spacing: 0.08em; }
+    .search-hero__lead { color: var(--color-text-soft); font-size: 0.93rem; margin: 0; line-height: 1.9; }
+    .search-form { display: flex; gap: 10px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
+    .search-form input, .search-form select { padding: 10px 14px; border: 1px solid var(--color-border); font-size: 0.95rem; font-family: inherit; background: #fff; }
+    .search-form input { flex: 1; min-width: 220px; }
+    .search-form select { min-width: 140px; cursor: pointer; }
+    .search-form input:focus, .search-form select:focus { outline: none; border-color: var(--color-accent); }
+    .search-form__count { font-size: 0.84rem; color: var(--color-text-muted); font-weight: 700; letter-spacing: 0.06em; }
+    .search-results { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .search-results li { border: 1px solid var(--color-border); background: #fff; }
+    .search-results a { display: block; padding: 16px 20px; text-decoration: none; color: inherit; }
+    .search-results a:hover { border-color: var(--color-text); }
+    .search-results__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .search-results__cat { display: inline-block; padding: 3px 10px; background: var(--color-text); color: #fff; font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 700; }
+    .search-results__loss { color: var(--color-accent); font-weight: 900; font-size: 0.98rem; font-family: "Helvetica Neue", sans-serif; }
+    .search-results h3 { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; margin: 0 0 4px; color: var(--color-text); line-height: 1.55; }
+    .search-results__meta { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 4px; }
+    .search-results p { font-size: 0.82rem; color: var(--color-text-soft); margin: 4px 0 0; line-height: 1.7; }
+    @media (max-width: 540px) {
+      .search-hero__title { font-size: 1.6rem; }
+      .search-form input { min-width: 100%; }
+    }
+  </style>
+</BaseLayout>

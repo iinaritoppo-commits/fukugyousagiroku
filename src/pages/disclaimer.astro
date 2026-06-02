@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="免責事項"
+  description="副業詐欺録の免責事項。掲載情報の正確性・最新性・利用責任・著作権・リンクポリシーについて。"
+>
+  <section class="legal">
+    <header class="legal__head">
+      <span class="legal__sub">DISCLAIMER</span>
+      <h1 class="legal__title">免責事項</h1>
+      <p class="legal__update">最終改訂：2026年5月</p>
+    </header>
+
+    <h2>1. 掲載情報の性質</h2>
+    <p>当サイト『副業詐欺録』に掲載されている被害事例は、投稿者本人からの取材を元に再構成したものです。投稿者の個人名・勤務先・特定可能情報は伏字で扱い、事業者・サービス名については、消費生活センター等で言及可能な範囲のみ実名で記載しています。</p>
+    <p>「事案アーカイブ」と明記された記事は、消費者庁の公表資料・大手新聞社の報道など、すでに公開されている情報を元に過去の重大事案を再構成したものです。記載する事実関係は出典元の公表時点の情報に基づきます。</p>
+
+    <h2>2. 情報の正確性・最新性</h2>
+    <p>当サイトは、掲載情報の正確性に最大限の注意を払っていますが、内容の正確性・完全性・最新性について保証するものではありません。掲載情報を利用したことによって生じたいかなる損害についても、当サイトは責任を負いません。</p>
+    <p>特に以下の点にご留意ください：</p>
+    <ul>
+      <li>記事中の事業者・サービスに関する係争状況・行政処分・刑事手続きは、記載時点の情報です。最新状況は出典元の報道・公的サイトでご確認ください。</li>
+      <li>返金可能性・回収率の記述は、過去の交渉結果に基づく目安であり、保証された数字ではありません。</li>
+      <li>被害申告・回収交渉は、必ず<a href="https://www.kokusen.go.jp/" target="_blank" rel="noopener">消費生活センター（188）</a>・弁護士など専門家へご相談ください。</li>
+    </ul>
+
+    <h2>3. 投資・取引判断について</h2>
+    <p>当サイトは、特定の事業者・サービス・投資商品の購入・契約を推奨するものでも、否定するものでもありません。掲載されている被害事例は、個別の投稿者の体験を記録したものであり、同種のサービス全体への評価や警告ではありません。</p>
+    <p>金融商品・副業案件への参加判断は、ご自身の責任において、関連する利用規約・特商法表記・金融庁の登録情報等を必ずご確認の上、行ってください。</p>
+
+    <h2>4. 攻撃・誹謗中傷を目的とするものではないこと</h2>
+    <p>当サイトの掲載は、特定の事業者・個人を名指しで攻撃する目的ではありません。被害の構造を共有し、後続の被害を未然に防ぐことを目的としています。記載内容について、対象事業者からの正当な反論・訂正要請があった場合は、合理的な範囲で対応します。</p>
+
+    <h2>5. 著作権・引用</h2>
+    <p>当サイトに掲載されているテキスト・画像・編集物の著作権は、当サイトまたは正当な権利者に帰属します。引用にあたっては、出典として『副業詐欺録（URL）』を明記してください。記事の全文転載・大幅な改変を伴う引用は、事前に<a href="/contact/">お問い合わせ</a>よりご連絡ください。</p>
+    <p>事業者名・行政処分情報・刑事事件情報など、当サイトが引用している公的情報・報道情報は、各出典元に帰属します。</p>
+
+    <h2>6. リンクポリシー</h2>
+    <p>当サイトへのリンクは原則自由です。リンク元のサイトの内容によっては、リンクの拒否・削除をお願いする場合があります。</p>
+    <p>当サイトから他のサイトへのリンクは、参考情報として掲載しているもので、リンク先サイトの内容について当サイトが保証するものではありません。</p>
+
+    <h2>7. 免責事項の変更</h2>
+    <p>当サイトは、必要に応じて本免責事項を変更することがあります。重要な変更がある場合は、サイト上で告知します。</p>
+
+    <h2>8. お問い合わせ</h2>
+    <p>本免責事項に関するお問い合わせ、または記事内容に関する訂正・削除要請は、<a href="/contact/">お問い合わせ</a>からご連絡ください。本人確認の上、合理的な範囲で対応します。</p>
+  </section>
+
+  <style>
+    .legal { max-width: 720px; margin: 0 auto; padding: 48px 24px 96px; line-height: 1.9; font-family: var(--font-sans, sans-serif); }
+    .legal__head { margin-bottom: 36px; }
+    .legal__sub { display:inline-block; font-size:0.78rem; letter-spacing:0.15em; color:#8a6010; font-weight:600; }
+    .legal__title { font-size: 1.7rem; margin: 6px 0 8px; font-family: var(--font-serif, serif); font-weight: 700; color: #1c1e26; }
+    .legal__update { font-size: 0.85rem; color: #7a8595; margin: 0; }
+    .legal h2 { font-size: 1.05rem; margin: 32px 0 12px; font-family: var(--font-serif, serif); font-weight: 700; color: #1c1e26; padding-left: 12px; border-left: 3px solid #b8312a; }
+    .legal p { font-size: 0.95rem; color: #2c3038; margin: 0 0 14px; }
+    .legal ul { margin: 0 0 14px; padding-left: 22px; }
+    .legal li { font-size: 0.92rem; color: #2c3038; margin-bottom: 6px; }
+    .legal a { color: #b8312a; text-decoration: none; }
+    .legal a:hover { text-decoration: underline; }
+    @media (max-width: 540px) { .legal { padding: 32px 16px 64px; } .legal__title { font-size: 1.4rem; } }
+  </style>
+</BaseLayout>

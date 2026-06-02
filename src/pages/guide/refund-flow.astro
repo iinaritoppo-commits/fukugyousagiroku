@@ -1,0 +1,273 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = "副業詐欺の返金 弁護士相談の流れ｜本人取材で見えた対応ステップ";
+const description = "副業詐欺で被害に遭った人が、返金を実現するまでの実際の流れを取材記録から整理。証拠保全・消費生活センター相談・クレジットカード会社チャージバック・弁護士相談・少額訴訟・集団訴訟など、被害金額別の現実的な対応ステップを本人取材ベースでまとめる。";
+const updatedAt = "2026-05-28";
+
+const articleLD = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description: description,
+  datePublished: updatedAt,
+  dateModified: updatedAt,
+  author: { "@type": "Person", name: "白川", url: "https://fukugyousagiroku.com/about/" },
+  publisher: {
+    "@type": "Organization",
+    name: "副業詐欺録",
+    logo: { "@type": "ImageObject", url: "https://fukugyousagiroku.com/site-logo.svg" },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": "https://fukugyousagiroku.com/guide/refund-flow/" },
+  inLanguage: "ja-JP",
+};
+
+const breadcrumbs = [
+  { name: "副業詐欺録", url: "/" },
+  { name: "ガイド", url: "/guide/" },
+  { name: "副業詐欺の返金 弁護士相談の流れ", url: "/guide/refund-flow/" },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  pageType="article"
+  articleMeta={{ headline: title, datePublished: updatedAt, dateModified: updatedAt, author: "白川", category: "ガイド / 被害後対応" }}
+  breadcrumbs={breadcrumbs}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleLD)} />
+
+  <article class="guide-page">
+    <nav class="bc">
+      <a href="/">トップ</a><span>›</span><a href="/guide/">ガイド</a><span>›</span><span>副業詐欺の返金 弁護士相談の流れ</span>
+    </nav>
+
+    <header class="guide-head">
+      <span class="guide-head__cat">ガイド / 被害後対応</span>
+      <h1 class="guide-head__title">{title}</h1>
+      <p class="guide-head__lead">
+        副業詐欺の被害者本人を取材すると、返金を実現できた人と、できなかった人の差は対応の早さと順序で決まる。<br/>
+        ここでは、実際に取材した流れを段階別に整理する。
+      </p>
+      <div class="guide-head__meta">
+        <span><strong>更新</strong>{updatedAt}</span>
+        <span><strong>編集</strong>白川</span>
+      </div>
+    </header>
+
+    <section class="guide-section guide-section--alert">
+      <h2>最初の48時間が回収率を決める</h2>
+      <p>
+        取材した被害者の中で、被害金額が戻ってきた人と戻ってこなかった人を比較すると、最初の48時間の動きで結果が分かれていた。
+      </p>
+      <p>
+        詐欺事業者は、被害が表面化した直後から「逃走準備」を始める。LINEブロック・会社解散・口座解約・サーバー閉鎖。<br />
+        被害者側が動き始めるまでの時間が短いほど、回収可能な財産・証拠・連絡経路が多く残っている。
+      </p>
+      <p>
+        「気が動転して何もできなかった」「家族に話せなくて時間が経った」というケースは、回収率がほぼゼロになる。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 1：証拠保全（被害発覚直後）</h2>
+      <p>
+        まず、相手が消す前に証拠を全て保存する。
+      </p>
+      <ol>
+        <li><strong>LINE / Telegram のやり取り</strong>を画面録画 or スクリーンショットで全保存</li>
+        <li><strong>契約書・申込書・規約</strong>のPDF/写真</li>
+        <li><strong>送金記録</strong>（銀行振込明細・クレジットカード明細・暗号資産トランザクションID）</li>
+        <li><strong>広告ページ・ランディングページ</strong>のスクリーンショット（後で削除される）</li>
+        <li><strong>運営会社情報</strong>（特定商取引法表記・運営者プロフィール）</li>
+        <li><strong>セミナー動画・音声</strong>がある場合はダウンロード保存</li>
+      </ol>
+      <p>
+        画像保存はクラウドストレージにバックアップ。本体スマホが壊れた・初期化された時の備え。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 2：支払いの停止（48時間以内）</h2>
+      <p>
+        まだ請求が継続している場合は、即座に止める。
+      </p>
+      <ol>
+        <li><strong>サブスク契約</strong>：アプリ・サービス側で解約手続き</li>
+        <li><strong>クレジットカード分割払い</strong>：カード会社に連絡してチャージバック検討</li>
+        <li><strong>銀行振込予定</strong>：未送金分の差止め</li>
+        <li><strong>暗号資産送金</strong>：取引所のサポートに即連絡（凍結可能な場合あり）</li>
+      </ol>
+      <p>
+        「支払いが続いている=被害が拡大している」状態。証拠保全と並行して、即停止が優先。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 3：消費生活センター相談（188に電話）</h2>
+      <p>
+        消費生活センターは「188（いやや）」で全国共通の電話番号。<br />
+        匿名相談可能・無料。被害金額が小さくても受け付ける。
+      </p>
+      <p>
+        相談で得られる情報：
+      </p>
+      <ol>
+        <li><strong>クーリングオフ適用可否</strong>（契約から8日以内の特定商取引で可能性あり）</li>
+        <li><strong>同じ事業者への被害相談実績</strong>（多数あれば事案化されてる可能性）</li>
+        <li><strong>適格消費者団体の集団訴訟予定</strong>の有無</li>
+        <li><strong>弁護士相談を勧めるべきかの判断材料</strong></li>
+      </ol>
+      <p>
+        消費生活センター自体は返金交渉を代行しないが、次の動きの指針が出る。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 4：クレジットカード会社のチャージバック</h2>
+      <p>
+        クレジットカードで支払った場合、カード会社に「商品・サービスの不当性」を主張してチャージバック申請可能。
+      </p>
+      <p>
+        必要な情報：
+      </p>
+      <ol>
+        <li>支払い明細</li>
+        <li>契約書 / 規約</li>
+        <li>「商品・サービスが約束通り提供されなかった」証拠（LINEのやり取りなど）</li>
+        <li>事業者との交渉履歴（返金拒否の返信など）</li>
+      </ol>
+      <p>
+        チャージバックには期限がある（決済から60日〜120日が一般的）。早めの行動が必要。<br />
+        VISA・Mastercard・JCBそれぞれ対応が違うので、カード会社のサポート窓口で確認する。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 5：弁護士相談（被害額50万円以上の目安）</h2>
+      <p>
+        弁護士費用の目安：相談料 30〜60分5,000〜10,000円、着手金 被害額の8〜10%、報酬金 回収額の16〜20%。
+      </p>
+      <p>
+        被害額50万円以上で、相手の所在・財産が特定できる場合、費用対効果が成立しやすい。<br />
+        被害額が50万円未満の場合は、少額訴訟や集団訴訟参加の方が現実的。
+      </p>
+      <p>
+        弁護士選びのポイント：
+      </p>
+      <ol>
+        <li><strong>消費者問題に強い弁護士</strong>を選ぶ（一般民事じゃなく専門)</li>
+        <li><strong>初回相談無料</strong>の弁護士会・法テラスを活用</li>
+        <li><strong>同じ事業者を扱った実績</strong>がある弁護士は交渉が早い</li>
+        <li><strong>完全成功報酬制</strong>の弁護士は、回収可能性の事前判断が厳しい</li>
+      </ol>
+      <p>
+        弁護士に依頼する前に、消費生活センターでの相談記録を持参すると、相談が早く進む。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 6：被害金額別の現実的な対応</h2>
+      <p>
+        被害金額によって、現実的な選択肢が変わる。
+      </p>
+      <ol class="amount-list">
+        <li>
+          <strong>〜10万円</strong>：消費生活センター相談＋クレジットカード会社チャージバック。弁護士依頼は費用倒れになる。
+        </li>
+        <li>
+          <strong>10〜50万円</strong>：チャージバック＋少額訴訟（60万円以下対応）。同じ事業者の被害者と協力して情報共有。
+        </li>
+        <li>
+          <strong>50〜300万円</strong>：弁護士依頼が費用対効果として成立。集団訴訟の動きがあれば参加検討。
+        </li>
+        <li>
+          <strong>300万円以上</strong>：弁護士依頼必須。相手事業者の財産仮差押え・刑事告訴も検討。
+        </li>
+      </ol>
+    </section>
+
+    <section class="guide-section">
+      <h2>STEP 7：警察への被害届</h2>
+      <p>
+        詐欺罪の要件を満たす場合、警察への被害届を検討する。
+      </p>
+      <p>
+        詐欺罪が成立する条件：
+      </p>
+      <ol>
+        <li><strong>欺罔行為</strong>（嘘の説明）</li>
+        <li><strong>錯誤</strong>（被害者がその嘘を信じた）</li>
+        <li><strong>財物の交付</strong>（被害者が金品を渡した）</li>
+        <li><strong>因果関係</strong>（上の流れが繋がっている）</li>
+      </ol>
+      <p>
+        警察は民事不介入の原則があるため、「契約トラブル」と扱われると動かない場合がある。<br />
+        弁護士同行で被害届を出すと、刑事事件として扱われる確率が上がる。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>取材で見えた「回収できた人」の共通点</h2>
+      <p>
+        被害から実際に返金を実現できた取材対象者には、共通する行動パターンがあった。
+      </p>
+      <ol>
+        <li><strong>被害発覚から48時間以内に動き出した</strong>（証拠保全＋支払い停止）</li>
+        <li><strong>家族や信頼できる第三者に早めに話した</strong>（一人で抱え込まなかった）</li>
+        <li><strong>消費生活センターを最初の相談先にした</strong>（公的機関の記録が後で効く）</li>
+        <li><strong>同じ被害者と繋がった</strong>（SNS・被害者掲示板で情報共有）</li>
+        <li><strong>記録を時系列で整理した</strong>（弁護士相談時に説明が早い）</li>
+      </ol>
+    </section>
+
+    <section class="guide-section">
+      <h2>関連の取材記録</h2>
+      <ul class="guide-related">
+        <li><a href="/guide/8-patterns/">副業詐欺の典型8パターン 完全版</a></li>
+        <li><a href="/guide/joho-line-pattern/">情報商材詐欺の勧誘LINE文面｜典型7パターン</a></li>
+        <li><a href="/category/jirei/">過去の有名な副業詐欺事案アーカイブ</a></li>
+        <li><a href="/about/">運営者・編集方針について</a></li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .guide-page { max-width: 780px; margin: 0 auto; padding: 0 24px 60px; }
+  .bc { font-size: 0.78rem; color: #666; margin: 20px 0 0; }
+  .bc a { color: #1a2f4e; text-decoration: none; }
+  .bc a:hover { text-decoration: underline; }
+  .bc span { margin: 0 6px; color: #c8201c; }
+
+  .guide-head { padding: 28px 0 22px; border-bottom: 2px solid #1a1a1a; margin-bottom: 28px; }
+  .guide-head__cat { display: inline-block; background: #1a1a1a; color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; padding: 5px 12px; margin-bottom: 14px; }
+  .guide-head__title { font-family: "Noto Serif JP", serif; font-size: clamp(1.4rem, 3.2vw, 1.75rem); font-weight: 700; color: #1a1a1a; margin: 0 0 14px; line-height: 1.55; letter-spacing: 0.04em; }
+  .guide-head__lead { margin: 0 0 16px; font-size: 0.96rem; color: #333; line-height: 2; }
+  .guide-head__meta { display: flex; gap: 18px; font-size: 0.8rem; color: #666; }
+  .guide-head__meta strong { color: #444; margin-right: 6px; }
+
+  .guide-section { margin: 32px 0; }
+  .guide-section h2 { font-family: "Noto Serif JP", serif; font-size: 1.22rem; font-weight: 700; color: #1a1a1a; margin: 0 0 14px; padding-bottom: 9px; border-bottom: 2px solid #1a1a1a; letter-spacing: 0.04em; }
+  .guide-section p { font-size: 0.95rem; line-height: 1.95; color: #1a1a1a; margin: 0 0 12px; }
+  .guide-section strong { color: #c8201c; }
+  .guide-section ol { padding-left: 22px; margin: 12px 0; }
+  .guide-section ol li { margin-bottom: 6px; font-size: 0.93rem; line-height: 1.85; }
+
+  .guide-section--alert { background: #fbf6f5; border-left: 4px solid #c8201c; padding: 20px 22px; }
+  .guide-section--alert h2 { border-bottom-color: #c8201c; }
+
+  .amount-list { list-style: none; padding: 0; margin: 12px 0; display: flex; flex-direction: column; gap: 10px; }
+  .amount-list li { padding: 12px 16px; background: #fff; border: 1px solid #ddd; border-left: 4px solid #c8201c; font-size: 0.93rem; line-height: 1.85; }
+
+  .guide-related { list-style: none; padding: 0; margin: 14px 0 0; }
+  .guide-related li { margin-bottom: 8px; padding: 10px 14px; background: #fff; border: 1px solid #ddd; border-left: 3px solid #c8201c; }
+  .guide-related a { color: #1a2f4e; text-decoration: none; font-weight: 600; font-size: 0.93rem; }
+  .guide-related a:hover { text-decoration: underline; }
+
+  @media (max-width: 540px) {
+    .guide-page { padding: 0 18px 50px; }
+    .guide-section h2 { font-size: 1.06rem; }
+  }
+</style>

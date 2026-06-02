@@ -1,0 +1,100 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const CAT_LABELS: Record<string, string> = {
+  joho: "情報商材", mlm: "MLM", coach: "コンサル詐欺", ai: "AI副業",
+  invest: "投資型副業", romance: "ロマンス商法", busshu: "物販系", overseas: "海外案件",
+};
+
+const dir = path.join(process.cwd(), "approved");
+const entries: any[] = [];
+if (fs.existsSync(dir)) {
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith(".json")) continue;
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"));
+      if (j.slug && j.title) {
+        entries.push({
+          slug: j.slug,
+          title: j.title,
+          category: CAT_LABELS[j.category] ?? j.category,
+          loss: j.loss_amount_yen ?? 0,
+          age: j.persona?.age ?? "",
+          gender: j.persona?.gender ?? "",
+          prefecture: j.persona?.prefecture ?? "",
+        });
+      }
+    } catch {}
+  }
+}
+const ranked = entries.sort((a, b) => b.loss - a.loss).slice(0, 10);
+
+function fmt(n: number) {
+  if (n >= 1e8) return `${(n / 1e8).toFixed(1)}億円`;
+  return `${(n / 1e4).toLocaleString()}万円`;
+}
+---
+<BaseLayout
+  title="損失額ランキング TOP10"
+  description="副業詐欺録に記録された取材記録のうち、損失額が大きい順に並べたTOP10。事案アーカイブ含む。"
+>
+  <main class="rank-page">
+    <nav class="breadcrumb"><a href="/">トップ</a> ＞ <a href="/#section-ranking">ランキング</a> ＞ 損失額 TOP10</nav>
+
+    <header class="rank-hero">
+      <span class="rank-hero__sub">LOSS RANKING</span>
+      <h1 class="rank-hero__title">損失額 TOP 10</h1>
+      <p class="rank-hero__lead">いちばん持っていかれた人たち。退職金・遺族年金・教育資金が標的になりやすい。</p>
+    </header>
+
+    <ol class="rank-list">
+      {ranked.map((e, i) => (
+        <li class="rank-item">
+          <a href={`/articles/${e.slug}/`}>
+            <span class="rank-item__no">{String(i + 1).padStart(2, "0")}</span>
+            <div class="rank-item__body">
+              <div class="rank-item__head">
+                <span class="rank-item__cat">{e.category}</span>
+                <span class="rank-item__loss">{fmt(e.loss)}</span>
+              </div>
+              <h3 class="rank-item__title">{e.title}</h3>
+              <p class="rank-item__meta">{e.age}歳{e.gender}・{e.prefecture}</p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </main>
+
+  <style>
+    .rank-page { max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; font-family: var(--font-sans); }
+    .breadcrumb { font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 24px; }
+    .breadcrumb a { color: var(--color-text-soft); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-accent); }
+    .rank-hero { padding: 24px 0 28px; border-bottom: 2px solid var(--color-text); margin-bottom: 28px; }
+    .rank-hero__sub { display: inline-block; font-size: 0.7rem; letter-spacing: 0.45em; color: var(--color-accent); font-weight: 700; margin-bottom: 12px; }
+    .rank-hero__title { font-size: 2.2rem; margin: 0 0 12px; font-family: var(--font-serif); font-weight: 900; color: var(--color-text); letter-spacing: 0.08em; }
+    .rank-hero__lead { color: var(--color-text-soft); font-size: 0.93rem; margin: 0; line-height: 1.9; }
+    .rank-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+    .rank-item { border-left: 4px solid var(--color-text); background: var(--color-bg-card); border: 1px solid var(--color-border); border-left-width: 4px; transition: all 0.18s; }
+    .rank-item:nth-child(-n+3) { border-left-color: var(--color-accent); }
+    .rank-item:hover { border-color: var(--color-text); border-left-color: var(--color-accent); transform: translateX(4px); }
+    .rank-item a { display: flex; gap: 18px; padding: 18px 20px; text-decoration: none; color: inherit; align-items: flex-start; }
+    .rank-item__no { font-family: "Helvetica Neue", sans-serif; font-size: 1.8rem; font-weight: 900; color: var(--color-text); line-height: 1; min-width: 60px; }
+    .rank-item:nth-child(-n+3) .rank-item__no { color: var(--color-accent); }
+    .rank-item__body { flex: 1; min-width: 0; }
+    .rank-item__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+    .rank-item__cat { display: inline-block; padding: 3px 10px; background: var(--color-text); color: #fff; font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 700; }
+    .rank-item__loss { color: var(--color-accent); font-weight: 900; font-size: 1.05rem; font-family: "Helvetica Neue", sans-serif; }
+    .rank-item__title { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; margin: 0 0 6px; color: var(--color-text); line-height: 1.55; }
+    .rank-item__meta { font-size: 0.78rem; color: var(--color-text-muted); margin: 0; }
+
+    @media (max-width: 540px) {
+      .rank-hero__title { font-size: 1.6rem; }
+      .rank-item a { padding: 14px 14px; gap: 12px; }
+      .rank-item__no { font-size: 1.5rem; min-width: 44px; }
+    }
+  </style>
+</BaseLayout>

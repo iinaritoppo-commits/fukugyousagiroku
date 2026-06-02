@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="プライバシーポリシー"
+  description="副業詐欺録のプライバシーポリシー。取得する情報・Cookieの利用・第三者配信（Google AdSense/Analytics）・問い合わせ先について。"
+>
+  <section class="legal">
+    <header class="legal__head">
+      <span class="legal__sub">PRIVACY POLICY</span>
+      <h1 class="legal__title">プライバシーポリシー</h1>
+      <p class="legal__update">最終改訂：2026年5月</p>
+    </header>
+
+    <h2>1. 個人情報の取得</h2>
+    <p>当サイト『副業詐欺録』（以下「当サイト」）では、以下の場合に個人情報を取得します。</p>
+    <ul>
+      <li>投稿フォーム（被害体験の投稿）：氏名（仮名可）／連絡先メールアドレス／投稿内容</li>
+      <li>お問い合わせフォーム：氏名／連絡先メールアドレス／問い合わせ内容</li>
+    </ul>
+    <p>取得した情報は、取材・編集・本人確認・返信目的にのみ利用し、本人の同意なく第三者に提供することはありません。</p>
+
+    <h2>2. アクセス解析（Google Analytics）</h2>
+    <p>当サイトでは、サイト訪問の傾向把握のために Google が提供する Google Analytics（GA4）を利用しています。Google Analytics は Cookie を用いてアクセスデータを収集します。収集される情報は匿名化されており、個人を特定するものではありません。</p>
+    <p>Google Analytics の利用規約・プライバシーポリシーは、以下のリンクからご確認いただけます。</p>
+    <ul>
+      <li><a href="https://marketingplatform.google.com/about/analytics/terms/jp/" target="_blank" rel="noopener">Google Analytics 利用規約</a></li>
+      <li><a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener">Google プライバシーポリシー</a></li>
+    </ul>
+    <p>Google Analytics による情報収集を希望されない場合は、<a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noopener">Google Analytics オプトアウトアドオン</a>を利用いただけます。</p>
+
+    <h2>3. 広告配信（Google AdSense）</h2>
+    <p>当サイトは、第三者配信の広告サービス「Google AdSense（グーグル アドセンス）」を利用予定または利用しています。広告配信事業者は、ユーザーの興味に応じた商品・サービスの広告を表示するため、Cookie（クッキー）を使用することがあります。</p>
+    <p>Cookie の使用や利用方法、Cookie の無効化方法、Google AdSense に関する詳細については、以下のリンクからご確認いただけます。</p>
+    <ul>
+      <li><a href="https://policies.google.com/technologies/ads?hl=ja" target="_blank" rel="noopener">Google 広告に関するポリシー</a></li>
+      <li><a href="https://adssettings.google.com/" target="_blank" rel="noopener">広告のカスタマイズ設定</a>（広告のパーソナライズをオフにできます）</li>
+    </ul>
+    <p>当サイト以外の第三者の Google AdSense サービス利用については、当該事業者のプライバシーポリシーをご確認ください。</p>
+
+    <h2>4. Cookie の利用について</h2>
+    <p>当サイトでは、サイト利用状況の把握・広告配信の最適化のために Cookie を利用しています。Cookie の受け入れを希望されない場合は、ブラウザの設定で Cookie を無効化することが可能です。ただし、Cookie を無効化した場合、一部の機能が利用できなくなる可能性があります。</p>
+
+    <h2>5. 個人情報の管理</h2>
+    <p>当サイトは、取得した個人情報を適切に管理し、漏えい・滅失・改ざん・不正アクセス等を防ぐために合理的な安全対策を講じます。投稿者・問い合わせ者の連絡先メールアドレスは、本人とのやり取りが完了次第、合理的な範囲で削除します。</p>
+
+    <h2>6. 個人情報の開示・訂正・削除</h2>
+    <p>ご本人から個人情報の開示・訂正・削除のご請求があった場合は、本人確認の上、合理的な範囲で対応します。<a href="/contact/">お問い合わせ</a>からご連絡ください。</p>
+
+    <h2>7. 免責事項</h2>
+    <p>当サイトに掲載している被害事例は、投稿者からの取材を元に再構成したものです。事実関係の正確性については最大限の確認を行っていますが、最新の係争状況・破産配当の進捗等については、各事案の出典元・公的サイトで直接ご確認ください。詳細は<a href="/disclaimer/">免責事項</a>をご覧ください。</p>
+
+    <h2>8. プライバシーポリシーの変更</h2>
+    <p>当サイトは、必要に応じて本プライバシーポリシーを変更することがあります。重要な変更がある場合は、サイト上で告知します。</p>
+
+    <h2>9. お問い合わせ</h2>
+    <p>本プライバシーポリシーに関するお問い合わせは、<a href="/contact/">お問い合わせ</a>からご連絡ください。</p>
+  </section>
+
+  <style>
+    .legal { max-width: 720px; margin: 0 auto; padding: 48px 24px 96px; line-height: 1.9; font-family: var(--font-sans, sans-serif); }
+    .legal__head { margin-bottom: 36px; }
+    .legal__sub { display:inline-block; font-size:0.78rem; letter-spacing:0.15em; color:#8a6010; font-weight:600; }
+    .legal__title { font-size: 1.7rem; margin: 6px 0 8px; font-family: var(--font-serif, serif); font-weight: 700; color: #1c1e26; }
+    .legal__update { font-size: 0.85rem; color: #7a8595; margin: 0; }
+    .legal h2 { font-size: 1.05rem; margin: 32px 0 12px; font-family: var(--font-serif, serif); font-weight: 700; color: #1c1e26; padding-left: 12px; border-left: 3px solid #b8312a; }
+    .legal p { font-size: 0.95rem; color: #2c3038; margin: 0 0 14px; }
+    .legal ul { margin: 0 0 14px; padding-left: 22px; }
+    .legal li { font-size: 0.92rem; color: #2c3038; margin-bottom: 6px; }
+    .legal a { color: #b8312a; text-decoration: none; }
+    .legal a:hover { text-decoration: underline; }
+    @media (max-width: 540px) { .legal { padding: 32px 16px 64px; } .legal__title { font-size: 1.4rem; } }
+  </style>
+</BaseLayout>

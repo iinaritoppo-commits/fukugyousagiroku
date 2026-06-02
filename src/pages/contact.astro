@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="お問い合わせ"
+  description="副業詐欺録へのお問い合わせ・被害体験の投稿・記事の訂正/削除要請・取材依頼・メディア掲載依頼。"
+>
+  <section class="contact">
+    <header class="contact__head">
+      <span class="contact__sub">CONTACT</span>
+      <h1 class="contact__title">お問い合わせ</h1>
+    </header>
+
+    <p class="contact__intro">『副業詐欺録』運営の白川が直接拝見します。以下のいずれかの目的で、メールでご連絡ください。本人確認のうえ、合理的な範囲で対応します。</p>
+
+    <h2>連絡先</h2>
+    <p class="contact__email">
+      <strong>メール</strong>：<a href="mailto:fukugyousagiroku@gmail.com">fukugyousagiroku@gmail.com</a>
+    </p>
+    <p class="contact__note">原則3〜7日以内に返信します。本人確認の上、必要に応じてやり取りを継続します。連絡先メールアドレスは、やり取り完了後に合理的な範囲で削除します。</p>
+
+    <h2>用件の種類</h2>
+    <ul class="contact__types">
+      <li><strong>被害体験の投稿</strong>：副業詐欺・情報商材・MLM・ロマンス商法など、実体験の取材依頼。本人確認の上、編集して掲載します。</li>
+      <li><strong>記事の訂正・削除要請</strong>：対象事業者の方・記事内容に誤りがある場合の訂正/削除依頼。正当な根拠を確認の上、合理的な範囲で対応します。</li>
+      <li><strong>取材依頼・メディア掲載</strong>：取材・寄稿・メディア出演などの依頼。条件相談の上で対応します。</li>
+      <li><strong>その他のお問い合わせ</strong>：サイト運営・編集方針・外部リンクの相談など。</li>
+    </ul>
+
+    <h2>投稿時のお願い</h2>
+    <ul class="contact__types">
+      <li>投稿者の個人名・勤務先・特定可能情報は、掲載時には伏字で扱います。やり取りの中で「掲載許可範囲」を必ず確認します。</li>
+      <li>取材内容は、編集の上で掲載します。原文ママの掲載はしません。</li>
+      <li>金銭の授受は一切ありません（取材費・掲載料・原稿料いずれも発生しません）。</li>
+      <li>掲載できる事業者名・サービス名は、消費生活センター等の公的相談で言及可能な範囲のみです。</li>
+    </ul>
+
+    <h2>緊急時の相談先</h2>
+    <p>被害に遭われたばかりで、緊急の対応が必要な場合は、当サイトより先に以下の専門機関へご連絡ください。</p>
+    <ul class="contact__types">
+      <li><a href="https://www.kokusen.go.jp/" target="_blank" rel="noopener">消費生活センター（局番なし188）</a>：消費者トラブル全般の相談</li>
+      <li>警察相談ダイヤル（#9110）：詐欺・犯罪被害の相談</li>
+      <li>金融サービス利用者相談室（0570-016811）：金融商品取引のトラブル相談</li>
+    </ul>
+  </section>
+
+  <style>
+    .contact { max-width: 720px; margin: 0 auto; padding: 48px 24px 96px; line-height: 1.9; font-family: var(--font-sans, sans-serif); }
+    .contact__head { margin-bottom: 36px; }
+    .contact__sub { display:inline-block; font-size:0.78rem; letter-spacing:0.15em; color:#8a6010; font-weight:600; }
+    .contact__title { font-size: 1.7rem; margin: 6px 0 8px; font-family: var(--font-serif, serif); font-weight: 700; color: #1c1e26; }
+    .contact__intro { font-size: 0.95rem; color: #2c3038; margin: 0 0 28px; }
+    .contact h2 { font-size: 1.05rem; margin: 32px 0 12px; font-family: var(--font-serif, serif); font-weight: 700; color: #1c1e26; padding-left: 12px; border-left: 3px solid #b8312a; }
+    .contact__email { font-size: 1.05rem; background: #fff7e8; border: 1px solid #e8d8a8; padding: 14px 18px; border-radius: 8px; }
+    .contact__email a { color: #b8312a; text-decoration: none; font-weight: 600; }
+    .contact__email a:hover { text-decoration: underline; }
+    .contact__note { font-size: 0.85rem; color: #7a8595; margin-top: 8px; }
+    .contact__types { margin: 0 0 14px; padding-left: 22px; }
+    .contact__types li { font-size: 0.92rem; color: #2c3038; margin-bottom: 10px; line-height: 1.8; }
+    .contact__types a { color: #b8312a; text-decoration: none; }
+    .contact__types a:hover { text-decoration: underline; }
+    @media (max-width: 540px) { .contact { padding: 32px 16px 64px; } .contact__title { font-size: 1.4rem; } }
+  </style>
+</BaseLayout>

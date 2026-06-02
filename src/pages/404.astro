@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="ページが見つかりません"
+  description="お探しのページは見つかりませんでした。副業詐欺録のトップ・カテゴリ別取材記録一覧から、お探しの記事をお探しください。"
+>
+  <section class="notfound">
+    <header class="notfound__head">
+      <span class="notfound__code">404</span>
+      <h1 class="notfound__title">お探しのページが見つかりませんでした</h1>
+      <p class="notfound__lead">移動・削除された記事の可能性があります。下記からお探しください。</p>
+    </header>
+
+    <nav class="notfound__nav">
+      <a href="/" class="notfound__link"><span>▸</span> トップへ戻る</a>
+      <a href="/articles/" class="notfound__link"><span>▸</span> 取材記録一覧</a>
+      <a href="/about/" class="notfound__link"><span>▸</span> 運営者について</a>
+      <a href="/contact/" class="notfound__link"><span>▸</span> お問い合わせ</a>
+    </nav>
+
+    <h2>カテゴリ別に探す</h2>
+    <div class="notfound__cats">
+      <a href="/category/joho/">情報商材</a>
+      <a href="/category/mlm/">MLM</a>
+      <a href="/category/coach/">コンサル詐欺</a>
+      <a href="/category/ai/">AI副業</a>
+      <a href="/category/invest/">投資型副業</a>
+      <a href="/category/romance/">ロマンス商法</a>
+      <a href="/category/busshu/">物販系</a>
+      <a href="/category/overseas/">海外案件</a>
+    </div>
+  </section>
+
+  <style>
+    .notfound { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; text-align: center; font-family: var(--font-sans, sans-serif); }
+    .notfound__head { margin-bottom: 40px; }
+    .notfound__code { display: inline-block; font-size: 4rem; font-weight: 800; color: #b8312a; letter-spacing: 0.08em; font-family: var(--font-serif, serif); line-height: 1; }
+    .notfound__title { font-size: 1.4rem; margin: 12px 0 8px; color: #1c1e26; font-family: var(--font-serif, serif); }
+    .notfound__lead { font-size: 0.95rem; color: #7a8595; margin: 0; }
+    .notfound__nav { display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto 40px; text-align: left; }
+    .notfound__link { color: #b8312a; text-decoration: none; padding: 10px 14px; border: 1px solid #e0d8c0; border-radius: 6px; background: #fff7e8; font-weight: 600; }
+    .notfound__link:hover { background: #ffe8c0; }
+    .notfound__link span { margin-right: 8px; color: #b8312a; }
+    .notfound h2 { font-size: 0.95rem; color: #5a6070; margin: 24px 0 14px; font-family: var(--font-serif, serif); }
+    .notfound__cats { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .notfound__cats a { display: inline-block; padding: 6px 14px; background: #f5f0e3; border: 1px solid #d4c8a3; border-radius: 999px; color: #1c1e26; text-decoration: none; font-size: 0.88rem; }
+    .notfound__cats a:hover { background: #e8d8a8; }
+  </style>
+</BaseLayout>

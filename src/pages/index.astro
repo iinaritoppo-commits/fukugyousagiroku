@@ -1,0 +1,1003 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { PREF_SLUG_MAP } from "../lib/prefecture-slug";
+
+// approved/*.json からローカル集計（記事数・累計損失額・分布）
+type Entry = {
+  slug: string;
+  title: string;
+  category: string;
+  catKey: string;
+  scheme: string;
+  loss: number;
+  age?: number | string;
+  gender?: string;
+  occupation?: string;
+  prefecture?: string;
+};
+let stockCount = 0;
+let totalLossYen = 0;
+const entries: Entry[] = [];
+const CAT_LABEL: Record<string, string> = {
+  joho: "情報商材",
+  mlm: "MLM",
+  coach: "コンサル詐欺",
+  ai: "AI副業",
+  invest: "投資型副業",
+  romance: "ロマンス商法",
+  busshu: "物販系",
+  overseas: "海外案件",
+};
+try {
+  const dir = path.join(process.cwd(), "approved");
+  if (fs.existsSync(dir)) {
+    const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
+    for (const f of files) {
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"));
+        if (typeof j.loss_amount_yen === "number") {
+          stockCount++;
+          totalLossYen += j.loss_amount_yen;
+          entries.push({
+            slug: j.slug,
+            title: j.title,
+            catKey: j.category,
+            category: CAT_LABEL[j.category] ?? j.category ?? "",
+            scheme: j.scheme ?? "",
+            loss: j.loss_amount_yen,
+            age: j.persona?.age ?? "",
+            gender: j.persona?.gender ?? "",
+            occupation: (j.persona?.occupation ?? "").split("（")[0],
+            prefecture: j.persona?.prefecture ?? "",
+          });
+        }
+      } catch {}
+    }
+  }
+} catch {}
+
+// 表示フォーマット統一：¥1,000,000- 形式
+const formatLoss = (yen: number): string => `¥${yen.toLocaleString()}-`;
+const totalLossLabel = stockCount > 0 ? formatLoss(totalLossYen) : "順次更新";
+
+// LATEST CASES（カテゴリ分散3枚）：slug の数字が大きいものを優先
+const sortedBySlug = [...entries].sort((a, b) => b.slug.localeCompare(a.slug));
+const latestSamples: Entry[] = [];
+const seenCats = new Set<string>();
+for (const e of sortedBySlug) {
+  if (latestSamples.length >= 3) break;
+  if (seenCats.has(e.catKey)) continue;
+  seenCats.add(e.catKey);
+  latestSamples.push(e);
+}
+
+// LOSS RANKING（損失額ランキング Top 10）
+const lossRanking = [...entries].sort((a, b) => b.loss - a.loss).slice(0, 10);
+
+// VOICES（被害者の声）：実記事と紐付け、クリックで該当記事に遷移
+const voiceLines = [
+  { slug: "fukugyo-joho-002", q: "「コピペで稼げる」を信じて、バイト代と親借金で45万円", who: "情報商材 / 22歳大学生 / 札幌" },
+  { slug: "fukugyo-ai-001", q: "AIが自動で稼ぐ、と言われた。提供物はChatGPT APIのラッパー", who: "AI副業 / 43歳男性 / 大阪" },
+  { slug: "fukugyo-mlm-002", q: "友人3人を巻き込んだ。350万円より、関係の崩壊が重かった", who: "暗号資産MLM / 35歳男性 / 横浜" },
+  { slug: "fukugyo-romance-001", q: "シンガポール起業家を名乗る相手に、半年で250万円", who: "ロマンス商法 / 43歳女性 / 兵庫" },
+  { slug: "fukugyo-coach-003", q: "コーチング3か月45万→延長で100万、コーチが突然消えた", who: "高額コーチング / 36歳女性 / 徳島" },
+  { slug: "fukugyo-busshu-001", q: "前職アパレル経験を活かせると思った物販スクール120万", who: "物販系 / 31歳女性 / 東京" },
+];
+
+// 都道府県集計
+const prefSet = new Set(entries.map((e) => e.prefecture).filter(Boolean) as string[]);
+const prefList = Array.from(prefSet).sort();
+
+// カテゴリ別件数
+const catCountMap: Record<string, number> = {};
+for (const e of entries) {
+  catCountMap[e.catKey] = (catCountMap[e.catKey] || 0) + 1;
+}
+
+// 年代別件数
+const ageGroups: { label: string; count: number; min: number; max: number }[] = [
+  { label: "20代", count: 0, min: 20, max: 29 },
+  { label: "30代", count: 0, min: 30, max: 39 },
+  { label: "40代", count: 0, min: 40, max: 49 },
+  { label: "50代", count: 0, min: 50, max: 59 },
+  { label: "60代以上", count: 0, min: 60, max: 99 },
+];
+for (const e of entries) {
+  const a = typeof e.age === "number" ? e.age : parseInt(String(e.age), 10);
+  if (Number.isNaN(a)) continue;
+  for (const g of ageGroups) {
+    if (a >= g.min && a <= g.max) { g.count++; break; }
+  }
+}
+const maxAgeCount = Math.max(...ageGroups.map((g) => g.count), 1);
+
+// 損失額レンジ別件数
+const lossRanges: { label: string; count: number; min: number; max: number; sumYen: number }[] = [
+  { label: "～30万", count: 0, min: 0, max: 300000, sumYen: 0 },
+  { label: "30～80万", count: 0, min: 300000, max: 800000, sumYen: 0 },
+  { label: "80～150万", count: 0, min: 800000, max: 1500000, sumYen: 0 },
+  { label: "150～300万", count: 0, min: 1500000, max: 3000000, sumYen: 0 },
+  { label: "300万以上", count: 0, min: 3000000, max: Infinity, sumYen: 0 },
+];
+for (const e of entries) {
+  for (const r of lossRanges) {
+    if (e.loss >= r.min && e.loss < r.max) { r.count++; r.sumYen += e.loss; break; }
+  }
+}
+const maxLossCount = Math.max(...lossRanges.map((r) => r.count), 1);
+
+// 編集ノート
+const editorNotes = [
+  {
+    date: "2026.05.12",
+    title: "LINEで届く『稼げる』の正体",
+    excerpt:
+      "コピーライティング情報商材45万、AI自動収益ツール60万…構造はほぼ同じ。「初月から黒字」「あと3名限定」というキーワードを見たら、即時連絡を絶ってください。",
+    cat: "情報商材",
+  },
+  {
+    date: "2026.05.10",
+    title: "高額コーチング、見分け方は3つ",
+    excerpt:
+      "①成果指標（KPI）が定義されてるか ②契約解除条件・返金規定が明文化されてるか ③コーチ自身の過去の生徒事例が公開されてるか。3つとも揃わない時点で、契約は見送り。",
+    cat: "コンサル詐欺",
+  },
+  {
+    date: "2026.05.08",
+    title: "なぜMLMで友達を失うのか",
+    excerpt:
+      "暗号資産MLMで友人3人を巻き込んだIさんの話。被害額350万円より重いのは、人間関係の崩壊。MLMは構造的に被害者が加害者にもなる二重ダメージ構造。",
+    cat: "MLM",
+  },
+  {
+    date: "2026.05.06",
+    title: "AI副業、急増する2つの罠",
+    excerpt:
+      "①汎用AI（ChatGPT等）の単純なラッパーを「独自AI」と称する商材 ②AI生成コンテンツのストック販売（規約変更で一夜にBAN）。AIブームに乗じた典型パターン。",
+    cat: "AI副業",
+  },
+  {
+    date: "2026.05.03",
+    title: "ロマンス商法、3つの典型",
+    excerpt:
+      "①マッチング起点 ②海外在住設定 ③通話・ビデオ通話回避。この3点セットは2024-2025年急増のテンプレート。Google画像検索でプロフィール写真の使い回しを確認するのが第一防衛。",
+    cat: "ロマンス商法",
+  },
+  {
+    date: "2026.04.30",
+    title: "退職金が狙われる年代",
+    excerpt:
+      "60代・退職前後の被害が増加。不動産小口投資・株式コンサル・国際ロマンス詐欺は、退職金1000-2000万円規模を狙う設計。退職金は「増やそう」と思った瞬間、リスクに晒される。",
+    cat: "投資型副業",
+  },
+];
+---
+
+<BaseLayout
+  title="副業詐欺録 ─ 騙された話を、騙される前に。"
+  description="情報商材・MLM・AI副業・コンサル詐欺・ロマンス商法など、副業を装った詐欺の実例を読者投稿の取材記録としてアーカイブしています。被害に遭う前に手口を知る場所。"
+>
+
+<section class="hero">
+  <div class="hero__inner">
+    <span class="hero__sub-en">FUKUGYOU SAGI ROKU ・ FRAUD RECORDS</span>
+    <h1 class="hero__title">
+      騙された話を、<br/>
+      <span class="hero__title__accent">騙される前に。</span>
+    </h1>
+    <p class="hero__lead">
+      情報商材・MLM・AI副業・コンサル詐欺・ロマンス商法。<br/>
+      『楽に稼げる』の裏側で起きていた話を、読者投稿の取材記録としてアーカイブしています。
+    </p>
+    <p class="hero__editor-note">― 怪しい話は、聞いてからじゃ遅い。―</p>
+
+    <div class="hero-cta">
+      <a href="/guide/sidejob-fraud-master/" class="hero-cta__primary hero-cta__primary--pillar">📘 副業詐欺の見抜き方 完全版 →</a>
+      <a href="#section-latest" class="hero-cta__secondary">手口を読む</a>
+      <a href="#section-ranking" class="hero-cta__secondary">損失額ランキング</a>
+      <a href="/about/" class="hero-cta__secondary">運営方針</a>
+    </div>
+
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat__label">CASES</span>
+        <span class="hero__stat__num">{stockCount}<span class="hero__stat__suffix">件</span></span>
+        <span class="hero__stat__sub">取材済の手口記録</span>
+      </div>
+      <div class="hero__stat hero__stat--main">
+        <span class="hero__stat__label">TOTAL LOSS</span>
+        <span class="hero__stat__num">{totalLossLabel}</span>
+        <span class="hero__stat__sub">累計被害額（集計値）</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat__label">CATEGORIES</span>
+        <span class="hero__stat__num hero__stat__num--text">9<span class="hero__stat__suffix">分類</span></span>
+        <span class="hero__stat__sub">情商・MLM・AI副業ほか</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <span class="disclaimer__icon">⚠</span>
+  <strong>注意</strong>：本記事は実例の警告アーカイブです。特定の業者・個人を名指しで攻撃する目的ではありません。被害申告は
+  <a href="https://www.kokusen.go.jp/" target="_blank" rel="noopener">消費生活センター（188）</a>・警察相談（#9110）へ。
+</div>
+
+<main class="container">
+
+<!-- FEATURED CARDS（kissfx風カラフル大型カード） -->
+<section class="featured-cards">
+  <a href="/guide/sidejob-fraud-master/" class="fc-card fc-card--red">
+    <span class="fc-card__cat">📘 完全ガイド</span>
+    <h3 class="fc-card__title">副業詐欺の<br>見抜き方</h3>
+    <p class="fc-card__desc">9パターン×判断軸5つ。本人取材で見えた手口の全体像。</p>
+    <span class="fc-card__cta">読む →</span>
+  </a>
+  <a href="#section-ranking" class="fc-card fc-card--orange">
+    <span class="fc-card__cat">💰 損失額TOP</span>
+    <h3 class="fc-card__title">被害額<br>ランキング</h3>
+    <p class="fc-card__desc">取材記録から損失額順に並べた手口別の被害規模。</p>
+    <span class="fc-card__cta">見る →</span>
+  </a>
+  <a href="/category/jirei/" class="fc-card fc-card--purple">
+    <span class="fc-card__cat">📚 過去事案</span>
+    <h3 class="fc-card__title">有名事案<br>アーカイブ</h3>
+    <p class="fc-card__desc">ジャパンライフ・安愚楽牧場・L&G・テキシア等の構造解説。</p>
+    <span class="fc-card__cta">学ぶ →</span>
+  </a>
+  <a href="#section-checklist" class="fc-card fc-card--blue">
+    <span class="fc-card__cat">⚠ 警戒サイン</span>
+    <h3 class="fc-card__title">チェック<br>リスト</h3>
+    <p class="fc-card__desc">即時連絡を絶つべき8つの危険サイン。3つ以上で要警戒。</p>
+    <span class="fc-card__cta">確認 →</span>
+  </a>
+</section>
+
+<!-- LATEST CASES -->
+<header class="section-h" id="section-latest">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">LATEST CASES</span>
+    <h2 class="section-h__title">最近の手口</h2>
+  </div>
+  <a href="/articles/" class="section-h__more">すべての記録 →</a>
+</header>
+{latestSamples.length === 0 ? (
+  <p class="empty-state">手口の記録は順次掲載予定です。取材が完了したものから随時掲載します。</p>
+) : (
+  <div class="case-grid">
+    {latestSamples.map((e) => (
+      <a href={`/articles/${e.slug}/`} class="case-card">
+        <div class="case-card__thumb">
+          <img src={`/ogp/${e.slug}.png`} alt={e.title} loading="lazy" width="600" height="315" />
+        </div>
+        <div class="case-card__body">
+          <span class="case-card__cat">{e.category}</span>
+          <h3 class="case-card__title">{e.title}</h3>
+          <div class="case-card__meta">
+            <span class="case-card__loss">{formatLoss(e.loss)}</span>
+            <span class="case-card__who">{e.age}歳{e.gender} / {e.prefecture}</span>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+)}
+
+<!-- VOICES -->
+<header class="section-h" id="section-voices">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">VOICES</span>
+    <h2 class="section-h__title">取材で届いた声</h2>
+  </div>
+</header>
+<div class="voices-grid">
+  {voiceLines.map((v) => (
+    <a href={`/articles/${v.slug}/`} class="voice-card">
+      <p class="voice-card__quote">「{v.q}」</p>
+      <p class="voice-card__who">― {v.who}</p>
+      <span class="voice-card__more">記事を読む →</span>
+    </a>
+  ))}
+</div>
+
+<!-- DASHBOARD: 被害傾向 -->
+<header class="section-h" id="section-dash">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">DASHBOARD</span>
+    <h2 class="section-h__title">被害傾向ダッシュボード</h2>
+  </div>
+  <span class="section-h__more">取材記録 {stockCount} 件の集計</span>
+</header>
+<div class="dash-grid">
+  <div class="dash-card">
+    <h3 class="dash-card__title">年代別 被害分布</h3>
+    <ul class="dash-bar">
+      {ageGroups.map((g) => (
+        <li class="dash-bar__row">
+          <span class="dash-bar__label">{g.label}</span>
+          <div class="dash-bar__track">
+            <span class="dash-bar__fill" style={`width: ${(g.count / maxAgeCount) * 100}%`}></span>
+          </div>
+          <span class="dash-bar__val">{g.count}件</span>
+        </li>
+      ))}
+    </ul>
+    <p class="dash-card__note">30代が最も多く、副業を始める年代と詐欺リスクの相関が見える。60代は退職金狙いの大型案件が含まれる。</p>
+  </div>
+
+  <div class="dash-card">
+    <h3 class="dash-card__title">損失額レンジ別 件数</h3>
+    <ul class="dash-bar">
+      {lossRanges.map((r) => (
+        <li class="dash-bar__row">
+          <span class="dash-bar__label">{r.label}</span>
+          <div class="dash-bar__track">
+            <span class="dash-bar__fill dash-bar__fill--loss" style={`width: ${(r.count / maxLossCount) * 100}%`}></span>
+          </div>
+          <span class="dash-bar__val">{r.count}件</span>
+        </li>
+      ))}
+    </ul>
+    <p class="dash-card__note">80～150万円ゾーンに集中。住宅ローン控除分やボーナス・退職金のサブセットが標的になりやすい金額帯。</p>
+  </div>
+</div>
+
+<!-- RANKINGS - 3つのボタン横並び -->
+<header class="section-h" id="section-ranking">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">RANKINGS</span>
+    <h2 class="section-h__title">3つのランキング</h2>
+  </div>
+  <span class="section-h__more">集計値：{totalLossLabel}</span>
+</header>
+<div class="rank-cards">
+  <a href="/ranking/loss/" class="rank-card">
+    <span class="rank-card__num">01</span>
+    <span class="rank-card__title">損失額 TOP10</span>
+    <span class="rank-card__sub">いちばん持っていかれた人たち</span>
+    <span class="rank-card__cta">ランキングを見る →</span>
+  </a>
+  <a href="/ranking/phrase/" class="rank-card">
+    <span class="rank-card__num">02</span>
+    <span class="rank-card__title">信じやすい謳い文句 TOP10</span>
+    <span class="rank-card__sub">「絶対稼げる」が何回出てきたかの集計</span>
+    <span class="rank-card__cta">ランキングを見る →</span>
+  </a>
+  <a href="/ranking/young/" class="rank-card">
+    <span class="rank-card__num">03</span>
+    <span class="rank-card__title">最年少被害者 TOP10</span>
+    <span class="rank-card__sub">19歳から記録、若さは標的にされやすい</span>
+    <span class="rank-card__cta">ランキングを見る →</span>
+  </a>
+</div>
+
+<!-- CATEGORIES -->
+<header class="section-h" id="section-cats">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">CATEGORIES</span>
+    <h2 class="section-h__title">手口の分類</h2>
+  </div>
+</header>
+<div class="cat-grid">
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">情報商材</span><span class="cat-card__cnt">{catCountMap.joho ?? 0}件</span></div>
+    <span class="cat-card__desc">「絶対勝てる」「コピペで月100万」型の高額教材。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">MLM</span><span class="cat-card__cnt">{catCountMap.mlm ?? 0}件</span></div>
+    <span class="cat-card__desc">健康食品・化粧品・暗号資産の連鎖紹介ビジネス。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">コンサル詐欺</span><span class="cat-card__cnt">{catCountMap.coach ?? 0}件</span></div>
+    <span class="cat-card__desc">高額コーチング・コンサル・スクール商法。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">AI副業</span><span class="cat-card__cnt">{catCountMap.ai ?? 0}件</span></div>
+    <span class="cat-card__desc">「AIで自動収益」を謳う2024-2025年急増型。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">投資型副業</span><span class="cat-card__cnt">{catCountMap.invest ?? 0}件</span></div>
+    <span class="cat-card__desc">「副業として投資」を装い金商法を回避するもの。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">ロマンス商法</span><span class="cat-card__cnt">{catCountMap.romance ?? 0}件</span></div>
+    <span class="cat-card__desc">マッチング・SNS経由の心理操作型投資勧誘。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">物販系</span><span class="cat-card__cnt">{catCountMap.busshu ?? 0}件</span></div>
+    <span class="cat-card__desc">Amazon物販・転売スクール・在庫買取型。</span>
+  </div>
+  <div class="cat-card">
+    <div class="cat-card__head"><span class="cat-card__name">海外案件</span><span class="cat-card__cnt">{catCountMap.overseas ?? 0}件</span></div>
+    <span class="cat-card__desc">海外送金型・ペーパーファンド・越境EC。</span>
+  </div>
+</div>
+
+<!-- 全国分布 -->
+<header class="section-h" id="section-map">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">NATIONWIDE</span>
+    <h2 class="section-h__title">被害発生エリア</h2>
+  </div>
+  <span class="section-h__more">{prefList.length} 都道府県から取材記録</span>
+</header>
+<div class="map-list">
+  {prefList.map((p) => {
+    const slug = PREF_SLUG_MAP[p];
+    return slug
+      ? <a class="map-tag map-tag--link" href={`/prefecture/${slug}/`}>{p}</a>
+      : <span class="map-tag">{p}</span>;
+  })}
+</div>
+
+<!-- CHECKLIST -->
+<header class="section-h" id="section-checklist">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">CHECKLIST</span>
+    <h2 class="section-h__title">こんな勧誘が来たら警戒</h2>
+  </div>
+</header>
+<ul class="checklist">
+  <li>「絶対」「確実」「100%」「失敗しない」という単語が含まれる</li>
+  <li>「月収100万円」「初月から黒字」など短期で大きい金額を提示してくる</li>
+  <li>「限定枠」「今月だけ」「あと3名」など希少性を強調してくる</li>
+  <li>「成功者の声」「生徒の声」が画像・動画で並ぶ（編集可能で再現性なし）</li>
+  <li>「コンサル料」「参加費」「ツール代」として先に高額請求してくる</li>
+  <li>マッチングアプリ・SNS DMで知り合った相手が投資の話を持ち出す</li>
+  <li>海外送金・暗号資産送金で支払いを要求してくる</li>
+  <li>「金融庁登録番号」「特商法表記」を確認しても出てこない</li>
+</ul>
+<p class="checklist__note">3つ以上当てはまるなら、即時連絡を絶ってください。一度送金すると回収はほぼ不可能です。</p>
+
+<!-- EDITOR'S NOTES -->
+<header class="section-h" id="section-notes">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">EDITOR'S NOTES</span>
+    <h2 class="section-h__title">管理人（白川）の編集ノート</h2>
+  </div>
+</header>
+<div class="notes-grid">
+  {editorNotes.map((n) => (
+    <article class="note-card">
+      <div class="note-card__meta">
+        <span class="note-card__date">{n.date}</span>
+        <span class="note-card__cat">{n.cat}</span>
+      </div>
+      <h3 class="note-card__title">{n.title}</h3>
+      <p class="note-card__excerpt">{n.excerpt}</p>
+    </article>
+  ))}
+</div>
+
+<!-- SCHEME MATRIX: 手口の構造 -->
+<header class="section-h" id="section-matrix">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">SCHEME MATRIX</span>
+    <h2 class="section-h__title">手口の構造</h2>
+  </div>
+  <span class="section-h__more">起点 → 信用構築 → 課金 → 消失</span>
+</header>
+<div class="matrix">
+  <table class="matrix-table">
+    <thead>
+      <tr>
+        <th>起点</th>
+        <th>典型的な誘導</th>
+        <th>典型カテゴリ</th>
+        <th>初期送金額</th>
+        <th>追加課金パターン</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>LINE / オプチャ</strong></td>
+        <td>「副業仲間」「主婦の副収入」コミュニティへ招待</td>
+        <td>情報商材・MLM・投資型副業</td>
+        <td>3〜10万円</td>
+        <td>上位コース・コンサル・ツール代</td>
+      </tr>
+      <tr>
+        <td><strong>YouTube広告</strong></td>
+        <td>「月50万」「誰でもできる」訴求の動画 → 無料セミナーLP</td>
+        <td>AI副業・コンサル・物販</td>
+        <td>15〜30万円</td>
+        <td>本科コース・VIP個別・物流契約</td>
+      </tr>
+      <tr>
+        <td><strong>Instagram / TikTok</strong></td>
+        <td>「主婦の副収入」リール → DM誘導 → 無料Zoom</td>
+        <td>物販系・AI副業・ロマンス</td>
+        <td>5〜10万円</td>
+        <td>分割で本コース50〜80万</td>
+      </tr>
+      <tr>
+        <td><strong>X DM</strong></td>
+        <td>「フリーランス向け」「単価アップ」コーチング誘導</td>
+        <td>コンサル・情報商材</td>
+        <td>10〜15万円</td>
+        <td>3か月契約45〜100万円</td>
+      </tr>
+      <tr>
+        <td><strong>マッチングアプリ</strong></td>
+        <td>「海外起業家」「軍関係者」プロフィール → 暗号資産勧誘</td>
+        <td>ロマンス商法</td>
+        <td>30〜50万円</td>
+        <td>「税金」「凍結解除料」で200万超</td>
+      </tr>
+      <tr>
+        <td><strong>知人紹介</strong></td>
+        <td>「副業仲間」「健康に良い商品」勧誘 → MLMコミュ参加</td>
+        <td>MLM・暗号資産MLM</td>
+        <td>8〜12万円</td>
+        <td>在庫買取・上位プラン・研修費</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="matrix__note">どの起点でも、構造は同じ。「無料 / 安価」で入って、信用が築かれた後に高額契約が来る。<strong>初期送金時に「次の課金がいくらか」を必ず確認</strong>。</p>
+</div>
+
+<!-- HELP -->
+<header class="section-h" id="section-help">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">EMERGENCY</span>
+    <h2 class="section-h__title">既に被害に遭ったら</h2>
+  </div>
+</header>
+<div class="help-grid">
+  <a href="https://www.kokusen.go.jp/" target="_blank" rel="noopener" class="help-card">
+    <span class="help-card__num">📞 188</span>
+    <h3 class="help-card__name">消費者ホットライン</h3>
+    <p class="help-card__desc">全国共通・最寄りの消費生活センターへ自動接続。年中無休。</p>
+  </a>
+  <a href="https://www.npa.go.jp/safetylife/seianki/seian36.htm" target="_blank" rel="noopener" class="help-card">
+    <span class="help-card__num">📞 #9110</span>
+    <h3 class="help-card__name">警察相談専用電話</h3>
+    <p class="help-card__desc">緊急通報以外の警察への相談。詐欺被害の届出はこちらから。</p>
+  </a>
+  <a href="https://www.fsa.go.jp/receipt/" target="_blank" rel="noopener" class="help-card">
+    <span class="help-card__num">🏛 金融庁</span>
+    <h3 class="help-card__name">金融サービス利用者相談室</h3>
+    <p class="help-card__desc">無登録業者・違法な金融商品取引業の通報窓口。</p>
+  </a>
+  <a href="https://www.nichibenren.or.jp/legal_advice/search.html" target="_blank" rel="noopener" class="help-card">
+    <span class="help-card__num">⚖ 弁護士</span>
+    <h3 class="help-card__name">弁護士会の法律相談</h3>
+    <p class="help-card__desc">日弁連の法律相談検索。被害回復の法的手段の相談。</p>
+  </a>
+</div>
+
+<!-- INTAKE CTA: 取材依頼 -->
+<section class="intake-cta">
+  <div class="intake-cta__inner">
+    <span class="intake-cta__sub">YOUR STORY</span>
+    <h2 class="intake-cta__title">あなたの体験を取材します</h2>
+    <p class="intake-cta__lead">
+      情報商材・MLM・コーチング・AI副業・ロマンス商法など、副業詐欺の被害に遭われた方の話を取材しています。<br/>
+      匿名・仮名で掲載可能。同じ被害を繰り返さないための『取材記録』として残します。
+    </p>
+    <ul class="intake-cta__points">
+      <li>仮名・属性ぼかし（年代＋都道府県のみ）で安全に</li>
+      <li>取材後、本人最終確認の上で掲載</li>
+      <li>掲載後の取り下げ依頼も対応</li>
+      <li>取材料・掲載料の発生なし（無料）</li>
+    </ul>
+    <a href="/about/" class="intake-cta__btn">取材方針を見る・連絡先 →</a>
+  </div>
+</section>
+
+<!-- 姉妹サイト -->
+<header class="section-h" id="section-sister">
+  <div class="section-h__title-group">
+    <span class="section-h__sub">SISTER SITES</span>
+    <h2 class="section-h__title">姉妹サイト</h2>
+  </div>
+</header>
+<div class="sister-grid">
+  <a href="https://kaidanroku.com/" target="_blank" rel="noopener" class="sister-card">
+    <span class="sister-card__name">怪談録</span>
+    <span class="sister-card__desc">読者投稿の実話怪談・実体験ベースの取材記録</span>
+  </a>
+  <a href="https://toushi-shippai-roku.pages.dev/" target="_blank" rel="noopener" class="sister-card">
+    <span class="sister-card__name">投資失敗録</span>
+    <span class="sister-card__desc">FX・株・仮想通貨・不動産の失敗記録アーカイブ</span>
+  </a>
+</div>
+
+</main>
+
+<style>
+  /* === FEATURED CARDS（kissfx風カラフル大型カード） === */
+  .featured-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px 0 48px; }
+  @media (max-width: 900px) { .featured-cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .featured-cards { grid-template-columns: 1fr; } }
+  .fc-card {
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 24px 22px; min-height: 200px;
+    border-radius: 6px; text-decoration: none; color: #ffffff;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+  .fc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.18); text-decoration: none; }
+  .fc-card__cat { font-size: 0.72rem; letter-spacing: 0.12em; font-weight: 700; opacity: 0.95; margin-bottom: 8px; }
+  .fc-card__title { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 900; line-height: 1.35; margin: 0 0 10px; letter-spacing: 0.04em; color: #ffffff; }
+  .fc-card__desc { font-size: 0.82rem; line-height: 1.65; margin: 0 0 14px; opacity: 0.92; color: #ffffff; }
+  .fc-card__cta { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; align-self: flex-start; padding: 6px 14px; background: rgba(255,255,255,0.22); border-radius: 999px; backdrop-filter: blur(4px); }
+  .fc-card--red { background: linear-gradient(135deg, #c8201c 0%, #8a1612 100%); }
+  .fc-card--orange { background: linear-gradient(135deg, #e07020 0%, #b04810 100%); }
+  .fc-card--purple { background: linear-gradient(135deg, #7a4090 0%, #4e2868 100%); }
+  .fc-card--blue { background: linear-gradient(135deg, #2a4d8c 0%, #1a3568 100%); }
+
+  /* === HERO === 暖色系（kissfx風：黄×白×赤アクセント・親しみやすい） */
+  .hero {
+    background: linear-gradient(180deg, #fff8de 0%, #fffcf0 60%, #ffffff 100%);
+    padding: 80px 24px 64px;
+    position: relative;
+    overflow: hidden;
+    color: #1a1a1a;
+    border-bottom: 1px solid #f0d878;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, #f5c842 0%, #f0b020 50%, #e08810 100%);
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c8201c 0%, #e05030 100%);
+  }
+  .hero__inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; text-align: center; }
+  .hero__sub-en { display: inline-block; font-size: 0.7rem; letter-spacing: 0.55em; color: #c8201c; font-weight: 700; margin-bottom: 22px; }
+  .hero__title { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; letter-spacing: 0.12em; margin: 0 0 22px; line-height: 1.42; color: #1a1a1a; font-family: var(--font-serif); }
+  .hero__title__accent { color: #c8201c; }
+  .hero__lead { color: #4a4a4a; line-height: 2.05; font-size: 1rem; margin: 0 auto 14px; max-width: 620px; }
+  .hero__editor-note { font-family: var(--font-serif); color: #8a8a8a; font-size: 0.92rem; letter-spacing: 0.16em; margin: 18px 0 32px; }
+  .hero-cta { display: flex; justify-content: center; gap: 14px; margin: 18px 0 32px; flex-wrap: wrap; }
+  .hero-cta a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 0; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.06em; text-decoration: none; transition: all 0.18s; }
+  .hero-cta__primary { background: #1a1a1a; color: #ffffff; border: 1px solid #1a1a1a; }
+  .hero-cta__primary:hover { background: #c8201c; border-color: #c8201c; transform: translateY(-1px); }
+  /* ピラー記事への大型CTA */
+  .hero-cta__primary--pillar { background: linear-gradient(135deg, #c8201c 0%, #a01816 100%); color: #ffffff; border: none; padding: 16px 34px; font-size: 1.02rem; box-shadow: 0 6px 18px rgba(200,32,28,0.28); letter-spacing: 0.08em; }
+  .hero-cta__primary--pillar:hover { background: linear-gradient(135deg, #a01816 0%, #7a1311 100%); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(200,32,28,0.4); }
+  .hero-cta__secondary { background: #ffffff; color: #1a1a1a; border: 1px solid #1a1a1a; }
+  .hero-cta__secondary:hover { background: #1a1a1a; color: #ffffff; }
+  .hero__stats {
+    display: grid; grid-template-columns: 1fr 2fr 1fr;
+    align-items: end; margin: 18px auto 0;
+    padding: 26px 32px;
+    background: #f6f6f5;
+    border: 1px solid #d8d8d8;
+    border-radius: 0;
+    max-width: 760px;
+  }
+  .hero__stat { text-align: center; padding: 0 14px; border-right: 1px solid #d8d8d8; }
+  .hero__stat:last-child { border-right: none; }
+  .hero__stat--main { padding: 0 18px; }
+  .hero__stat__label { display: block; font-size: 0.62rem; color: #8a8a8a; letter-spacing: 0.32em; margin-bottom: 8px; font-weight: 700; }
+  .hero__stat__num { font-size: 1.55rem; font-weight: 900; color: #1a1a1a; letter-spacing: 0.04em; line-height: 1; font-family: "Helvetica Neue", sans-serif; }
+  .hero__stat--main .hero__stat__num { font-size: 2.2rem; color: #c8201c; letter-spacing: 0.02em; }
+  .hero__stat__num--text { font-size: 1rem !important; letter-spacing: 0.08em; font-family: var(--font-serif); font-weight: 600; }
+  .hero__stat__suffix { font-size: 0.78rem; color: #4a4a4a; margin-left: 4px; font-weight: 700; }
+  .hero__stat__num--text .hero__stat__suffix { font-size: 0.72rem; }
+  .hero__stat__sub { display: block; font-size: 0.68rem; color: #8a8a8a; margin-top: 8px; letter-spacing: 0.06em; }
+
+  /* === DISCLAIMER === */
+  .disclaimer {
+    background: #f6f6f5;
+    border-top: 1px solid #d8d8d8;
+    border-bottom: 1px solid #d8d8d8;
+    padding: 14px 24px;
+    text-align: center;
+    font-size: 0.86rem;
+    color: #4a4a4a;
+    line-height: 1.85;
+  }
+  .disclaimer__icon { color: #c8201c; margin-right: 4px; font-weight: 900; }
+  .disclaimer strong { color: #1a1a1a; }
+  .disclaimer a { color: #b8312a; font-weight: 600; }
+  .disclaimer a:hover { text-decoration: underline; }
+
+  /* === CONTAINER === */
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; background: var(--color-bg); }
+
+  /* === SECTION HEADER === */
+  .section-h {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 64px 0 28px; gap: 16px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 28px;
+  }
+  .section-h__sub { display: block; font-size: 0.66rem; letter-spacing: 0.5em; color: var(--color-accent); font-weight: 700; margin-bottom: 8px; }
+  .section-h__title { font-size: 1.7rem; font-weight: 900; margin: 0; color: var(--color-text); letter-spacing: 0.08em; font-family: var(--font-serif); }
+  .section-h__more { font-size: 0.84rem; color: var(--color-accent); text-decoration: none; letter-spacing: 0.04em; font-weight: 600; }
+  .section-h__more:hover { color: var(--color-accent-soft); }
+
+  .empty-state { padding: 60px 20px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; border: 1px dashed var(--color-border); border-radius: 4px; }
+
+  /* === CASE CARDS === */
+  .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .case-card {
+    display: block; padding: 0 0 18px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px; overflow: hidden;
+    text-decoration: none; color: var(--color-text);
+    transition: all 0.15s;
+    box-shadow: var(--shadow-card);
+  }
+  .case-card:hover { transform: translateY(-3px); border-color: var(--color-accent); box-shadow: var(--shadow-card-hover); }
+  .case-card__thumb { width: 100%; aspect-ratio: 1200 / 630; background: #0a0610; overflow: hidden; border-bottom: 1px solid var(--color-border-soft); }
+  .case-card__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .case-card__body { padding: 16px 22px 0; }
+  .case-card__cat { display: inline-block; padding: 3px 10px; background: #fcebe5; color: var(--color-accent); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; border-radius: 2px; margin-bottom: 10px; }
+  .case-card__title { font-size: 1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.6; font-family: var(--font-serif); color: var(--color-text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .case-card__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .case-card__loss { font-family: "Helvetica Neue", sans-serif; font-size: 1.15rem; font-weight: 900; color: var(--color-loss); }
+  .case-card__who { font-size: 0.74rem; color: var(--color-text-muted); }
+
+  /* === VOICES === */
+  .voices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .voice-card {
+    display: block;
+    padding: 24px 22px 20px;
+    background: var(--color-bg-soft);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .voice-card:hover { background: var(--color-bg-card); border-left-color: var(--color-accent-soft); box-shadow: var(--shadow-card); transform: translateX(2px); }
+  .voice-card__quote { font-family: var(--font-serif); font-size: 0.94rem; color: var(--color-text); line-height: 1.85; margin: 0 0 10px; }
+  .voice-card__who { font-size: 0.74rem; color: var(--color-text-muted); margin: 0 0 10px; letter-spacing: 0.06em; }
+  .voice-card__more { display: inline-block; font-size: 0.74rem; color: var(--color-accent); font-weight: 700; letter-spacing: 0.06em; }
+
+  /* === DASHBOARD === */
+  .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .dash-card {
+    padding: 26px 28px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-card);
+  }
+  .dash-card__title { font-size: 1.05rem; font-weight: 800; color: var(--color-text); margin: 0 0 18px; font-family: var(--font-serif); letter-spacing: 0.04em; }
+  .dash-bar { list-style: none; padding: 0; margin: 0 0 16px; }
+  .dash-bar__row { display: grid; grid-template-columns: 80px 1fr 50px; align-items: center; gap: 12px; padding: 8px 0; }
+  .dash-bar__label { font-size: 0.84rem; color: var(--color-text-soft); font-weight: 600; }
+  .dash-bar__track { background: var(--color-bg-soft); border-radius: 4px; height: 16px; overflow: hidden; }
+  .dash-bar__fill { display: block; height: 100%; background: linear-gradient(90deg, var(--color-accent-2), var(--color-accent)); border-radius: 4px; transition: width 0.3s; }
+  .dash-bar__fill--loss { background: linear-gradient(90deg, var(--color-accent-warn), var(--color-loss)); }
+  .dash-bar__val { font-family: "Helvetica Neue", sans-serif; font-size: 0.86rem; font-weight: 800; color: var(--color-text); text-align: right; }
+  .dash-card__note { font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.75; margin: 0; padding-top: 14px; border-top: 1px dashed var(--color-border-soft); }
+
+  /* === RANKING === */
+  .ranking { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; box-shadow: var(--shadow-card); }
+  .ranking-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .ranking-table th { background: var(--color-bg-soft); color: var(--color-text-soft); font-size: 0.74rem; letter-spacing: 0.18em; font-weight: 700; padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--color-border); }
+  .ranking-table td { padding: 14px 12px; border-bottom: 1px solid var(--color-border-soft); }
+  .ranking-table tr:last-child td { border-bottom: none; }
+  .ranking-table__rank { font-family: "Helvetica Neue", sans-serif; font-size: 1.1rem; font-weight: 900; color: var(--color-accent); width: 50px; }
+  .ranking-table__loss { font-family: "Helvetica Neue", sans-serif; font-weight: 800; color: var(--color-loss); white-space: nowrap; }
+  .ranking-table__cat { display: inline-block; padding: 2px 8px; background: #fcebe5; color: var(--color-accent); font-size: 0.7rem; font-weight: 700; border-radius: 2px; letter-spacing: 0.08em; }
+  .ranking-table__who { color: var(--color-text-muted); font-size: 0.8rem; white-space: nowrap; }
+  .ranking-table__title { color: var(--color-text); text-decoration: none; font-weight: 600; line-height: 1.55; }
+  .ranking-table__title:hover { color: var(--color-accent); }
+  .ranking-table__title-col { min-width: 280px; }
+
+  /* === RANK CARDS（3つのランキングへのボタン） === */
+  .rank-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .rank-card {
+    position: relative;
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 28px 22px 22px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-text);
+    border-radius: 0;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.18s;
+  }
+  .rank-card::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease-out;
+  }
+  .rank-card:hover::before { transform: scaleX(1); }
+  .rank-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+  .rank-card__num { font-family: "Helvetica Neue", sans-serif; font-size: 0.72rem; letter-spacing: 0.25em; color: var(--color-text-muted); font-weight: 700; }
+  .rank-card__title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--color-text); line-height: 1.5; }
+  .rank-card__sub { font-size: 0.82rem; color: var(--color-text-soft); line-height: 1.7; flex: 1; }
+  .rank-card__cta { font-size: 0.78rem; color: var(--color-accent); font-weight: 700; letter-spacing: 0.04em; margin-top: 8px; }
+
+  @media (max-width: 720px) {
+    .rank-cards { grid-template-columns: 1fr; }
+  }
+
+  /* === CATEGORIES === */
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .cat-card {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 20px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .cat-card:hover { border-color: var(--color-accent); transform: translateY(-2px); box-shadow: var(--shadow-card); }
+  .cat-card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .cat-card__name { font-size: 1.05rem; font-weight: 800; color: var(--color-text); font-family: var(--font-serif); }
+  .cat-card__cnt { font-size: 0.74rem; color: var(--color-loss); font-weight: 700; font-family: "Helvetica Neue", sans-serif; }
+  .cat-card__desc { font-size: 0.8rem; color: var(--color-text-soft); line-height: 1.7; }
+
+  /* === MAP LIST === */
+  .map-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 20px; background: var(--color-bg-soft); border-radius: 6px; }
+  .map-tag {
+    display: inline-block; padding: 6px 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    font-size: 0.82rem;
+    color: var(--color-text-soft);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .map-tag--link:hover {
+    background: var(--color-text);
+    color: #fff;
+    border-color: var(--color-text);
+  }
+  .map-tag--link::after {
+    content: " →";
+    color: var(--color-accent);
+    font-weight: 700;
+    margin-left: 4px;
+  }
+
+  /* === CHECKLIST === */
+  .checklist {
+    list-style: none; padding: 26px 32px; margin: 0;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-card);
+  }
+  .checklist li { padding: 12px 0 12px 32px; position: relative; font-size: 0.94rem; color: var(--color-text); line-height: 1.85; border-bottom: 1px dashed var(--color-border-soft); }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before { content: "⚠"; position: absolute; left: 0; top: 12px; color: var(--color-accent-warn); font-weight: 700; font-size: 1.05rem; }
+  .checklist__note {
+    margin: 16px 0 0; padding: 16px 22px;
+    background: #fcebe5;
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-text);
+    font-size: 0.9rem; line-height: 1.85;
+    border-radius: 2px;
+  }
+
+  /* === EDITOR'S NOTES === */
+  .notes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; row-gap: 16px; }
+  .note-card {
+    padding: 22px 24px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .note-card:hover { border-color: var(--color-accent); }
+  .note-card__meta { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+  .note-card__date { font-size: 0.72rem; color: var(--color-text-muted); font-family: "Helvetica Neue", sans-serif; letter-spacing: 0.06em; }
+  .note-card__cat { display: inline-block; padding: 2px 8px; background: #fcebe5; color: var(--color-accent); font-size: 0.68rem; font-weight: 700; border-radius: 2px; letter-spacing: 0.08em; }
+  .note-card__title { font-size: 1.05rem; font-weight: 800; color: var(--color-text); margin: 0 0 10px; line-height: 1.55; font-family: var(--font-serif); }
+  .note-card__excerpt { font-size: 0.84rem; color: var(--color-text-soft); line-height: 1.85; margin: 0; }
+
+  /* === HELP === */
+  .help-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .help-card {
+    display: block; padding: 22px 26px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-decoration: none; color: var(--color-text);
+    transition: all 0.15s;
+  }
+  .help-card:hover { border-color: var(--color-accent); transform: translateY(-2px); box-shadow: var(--shadow-card); }
+  .help-card__num { display: block; font-size: 1.5rem; font-weight: 900; color: var(--color-loss); margin-bottom: 6px; letter-spacing: 0.02em; }
+  .help-card__name { font-size: 1.05rem; font-weight: 700; color: var(--color-text); margin: 0 0 6px; font-family: var(--font-serif); }
+  .help-card__desc { font-size: 0.82rem; color: var(--color-text-soft); line-height: 1.75; margin: 0; }
+
+  /* === SCHEME MATRIX === */
+  .matrix { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; box-shadow: var(--shadow-card); }
+  .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .matrix-table th { background: var(--color-bg-soft); color: var(--color-text-soft); font-size: 0.72rem; letter-spacing: 0.16em; font-weight: 700; padding: 14px 14px; text-align: left; border-bottom: 1px solid var(--color-border); }
+  .matrix-table td { padding: 16px 14px; border-bottom: 1px solid var(--color-border-soft); color: var(--color-text); vertical-align: top; line-height: 1.75; }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table td strong { color: var(--color-accent); font-weight: 800; display: block; font-family: var(--font-serif); }
+  .matrix__note { margin: 20px 0 0; padding: 18px 24px; background: #fff7e6; border-left: 4px solid var(--color-accent-warn); border-radius: 2px; font-size: 0.9rem; line-height: 1.85; color: var(--color-text); }
+  .matrix__note strong { color: var(--color-loss); font-weight: 800; }
+
+  /* === INTAKE CTA === */
+  .intake-cta {
+    margin: 64px 0 0;
+    padding: 56px 24px;
+    background: linear-gradient(135deg, var(--color-bg-dark), #1f2a3c);
+    color: var(--color-text-light);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .intake-cta::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 90% 30%, rgba(232, 160, 42, 0.10), transparent 50%),
+                radial-gradient(circle at 10% 80%, rgba(184, 49, 42, 0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .intake-cta__inner { position: relative; max-width: 720px; margin: 0 auto; text-align: center; z-index: 1; }
+  .intake-cta__sub { display: block; font-size: 0.7rem; letter-spacing: 0.5em; color: #c89a4a; font-weight: 700; margin-bottom: 14px; }
+  .intake-cta__title { font-size: 1.7rem; font-weight: 900; margin: 0 0 18px; letter-spacing: 0.08em; font-family: var(--font-serif); }
+  .intake-cta__lead { font-size: 0.96rem; line-height: 1.95; color: rgba(247, 241, 227, 0.88); margin: 0 0 22px; }
+  .intake-cta__points { list-style: none; padding: 0; margin: 0 auto 26px; max-width: 480px; text-align: left; }
+  .intake-cta__points li { padding: 8px 0 8px 26px; position: relative; font-size: 0.88rem; color: rgba(247, 241, 227, 0.86); }
+  .intake-cta__points li::before { content: "✓"; position: absolute; left: 0; top: 8px; color: var(--color-accent-warn); font-weight: 900; }
+  .intake-cta__btn {
+    display: inline-block; padding: 14px 36px;
+    background: var(--color-accent-warn);
+    color: #1a2230; font-weight: 800;
+    border-radius: 28px; text-decoration: none;
+    font-size: 0.94rem; letter-spacing: 0.06em;
+    transition: all 0.18s;
+  }
+  .intake-cta__btn:hover { background: #ffb84d; transform: translateY(-1px); }
+
+  /* === SISTER SITES === */
+  .sister-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .sister-card {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 20px 24px;
+    background: var(--color-bg-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .sister-card:hover { border-color: var(--color-accent); background: var(--color-bg-card); }
+  .sister-card__name { font-size: 1.1rem; font-weight: 800; color: var(--color-accent); font-family: var(--font-serif); }
+  .sister-card__desc { font-size: 0.82rem; color: var(--color-text-soft); line-height: 1.7; }
+
+  @media (max-width: 720px) {
+    .hero { padding: 64px 16px 48px; }
+    .hero__title { font-size: 1.8rem; letter-spacing: 0.08em; }
+    .hero__stats { grid-template-columns: 1fr; gap: 14px; padding: 18px; }
+    .hero__stat { padding: 10px 0; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+    .hero__stat:last-child { border-bottom: none; }
+    .hero-cta { flex-direction: column; }
+    .hero-cta a { width: 100%; justify-content: center; }
+    .container { padding: 0 16px 64px; }
+    .case-grid, .voices-grid, .notes-grid, .dash-grid { grid-template-columns: 1fr; }
+    .matrix-table { font-size: 0.76rem; }
+    .matrix-table th, .matrix-table td { padding: 10px 8px; }
+    .intake-cta { padding: 40px 18px; }
+    .intake-cta__title { font-size: 1.3rem; }
+    .dash-bar__row { grid-template-columns: 64px 1fr 44px; gap: 8px; }
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    .help-grid, .sister-grid { grid-template-columns: 1fr; }
+    .section-h__title { font-size: 1.3rem; }
+    .ranking-table { font-size: 0.78rem; }
+    .ranking-table th, .ranking-table td { padding: 10px 6px; }
+    .ranking-table__title-col { min-width: auto; }
+    .ranking-table__who { display: none; }
+    .checklist { padding: 22px 18px; }
+  }
+</style>
+
+</BaseLayout>

@@ -1,0 +1,283 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleEnhance from "../../components/ArticleEnhance.astro";
+
+// approved/*.json から記事を取得（microCMS 未連携時のローカルフォールバック）
+type LocalArticle = {
+  slug: string;
+  title: string;
+  description?: string;
+  content: string;
+  category?: string;
+  loss_amount_yen?: number;
+  scheme?: string;
+  persona?: any;
+};
+
+type Related = {
+  slug: string;
+  title: string;
+  loss: number;
+  prefecture: string;
+  age: number | string;
+  gender: string;
+};
+
+export async function getStaticPaths() {
+  const fsLocal = await import("node:fs");
+  const pathLocal = await import("node:path");
+  const dir = pathLocal.default.join(process.cwd(), "approved");
+  if (!fsLocal.default.existsSync(dir)) return [];
+  const allArticles: any[] = [];
+  for (const f of fsLocal.default.readdirSync(dir)) {
+    if (!f.endsWith(".json")) continue;
+    try {
+      const fullPath = pathLocal.default.join(dir, f);
+      const j = JSON.parse(fsLocal.default.readFileSync(fullPath, "utf-8"));
+      const stat = fsLocal.default.statSync(fullPath);
+      if (j.slug && j.title && j.content) {
+        j._mtime = stat.mtime.toISOString().slice(0, 10);  // YYYY-MM-DD
+        allArticles.push(j);
+      }
+    } catch {}
+  }
+  const out: any[] = [];
+  for (const article of allArticles) {
+    const sameCat = allArticles.filter((a: any) => a.slug !== article.slug && a.category === article.category);
+    const otherCat = allArticles.filter((a: any) => a.slug !== article.slug && a.category !== article.category);
+    const picked = [...sameCat, ...otherCat].slice(0, 6);
+    const related: Related[] = picked.map((a: any) => ({
+      slug: a.slug,
+      title: a.title,
+      loss: a.loss_amount_yen,
+      prefecture: a.persona?.prefecture ?? "",
+      age: a.persona?.age ?? "",
+      gender: a.persona?.gender ?? "",
+    }));
+    out.push({ params: { slug: article.slug }, props: { article, related } });
+  }
+  return out;
+}
+
+const { article, related } = Astro.props as { article: LocalArticle; related: Related[] };
+
+const formatLoss = (yen?: number): string => {
+  if (!yen) return "";
+  return `¥${yen.toLocaleString()}-`;
+};
+const CAT_LABEL: Record<string, string> = {
+  joho: "情報商材", mlm: "MLM", coach: "コンサル詐欺",
+  ai: "AI副業", invest: "投資型副業", romance: "ロマンス商法",
+  busshu: "物販系", overseas: "海外案件",
+};
+const catLabel = article.category ? (CAT_LABEL[article.category] ?? article.category) : "";
+---
+<BaseLayout
+  title={article.title}
+  description={article.description ?? article.title}
+  image={`/ogp/${article.slug}.webp`}
+  pageType="article"
+  articleMeta={{
+    headline: article.title,
+    category: catLabel,
+    datePublished: (article as any)._mtime ?? "2026-05-01",
+    dateModified: (article as any)._mtime ?? "2026-05-01",
+    author: "白川",
+  }}
+  breadcrumbs={[
+    { name: "副業詐欺録", url: "/" },
+    { name: "手口一覧", url: "/articles/" },
+    { name: article.title, url: `/articles/${article.slug}/` },
+  ]}
+>
+  <article class="article">
+    <nav class="article__breadcrumb">
+      <a href="/">副業詐欺録</a>
+      <span>/</span>
+      <a href="/articles/">手口一覧</a>
+      <span>/</span>
+      <span>{article.title}</span>
+    </nav>
+
+    <header class="article__head">
+      {catLabel && <span class="article__cat">{catLabel}</span>}
+      <h1 class="article__title">{article.title}</h1>
+      {article.scheme && <p class="article__scheme">手口：{article.scheme}</p>}
+      {article.loss_amount_yen && (
+        <div class="article__loss">
+          <span class="article__loss-label">被害額</span>
+          <span class="article__loss-amt">{formatLoss(article.loss_amount_yen)}</span>
+        </div>
+      )}
+    </header>
+
+    {article.persona && typeof article.persona === "object" && (
+      <aside class="persona-box">
+        <div class="persona-box__title">体験者プロフィール</div>
+        <dl>
+          {article.persona.name_initial && <><dt>仮名／属性</dt><dd>{article.persona.name_initial}さん・{article.persona.age}歳{article.persona.gender}</dd></>}
+          {article.persona.occupation && <><dt>居住・職業</dt><dd>{article.persona.prefecture}・{article.persona.occupation}</dd></>}
+          {article.persona.family && <><dt>家族構成</dt><dd>{article.persona.family}</dd></>}
+          {article.trigger && <><dt>勧誘の入口</dt><dd>{article.trigger}</dd></>}
+        </dl>
+      </aside>
+    )}
+
+    <ArticleEnhance content={article.content} title={article.title} url={`https://fukugyousagiroku.com/articles/${article.slug}/`} />
+
+    <div class="article__body" set:html={article.content} />
+
+    {(article.persona || article.loss_amount_yen) && (
+      <div class="record-block">
+        <div class="record-block__sub">─ 警告アーカイブ印 ─</div>
+        <div class="record-seal">
+          <div class="record-seal__cat">{catLabel || "副業詐欺"}</div>
+          <div class="record-seal__name">
+            {article.persona?.name_initial ?? "—"}さん
+            <small>{article.persona?.age ?? "—"}歳{article.persona?.gender ?? ""}・{article.persona?.prefecture ?? ""}</small>
+          </div>
+          <div class="record-seal__loss">{formatLoss(article.loss_amount_yen)}</div>
+          <div class="record-seal__stamp">告発記録</div>
+        </div>
+        <p class="record-block__note">この記録が、次の被害を1件でも止めますように。</p>
+      </div>
+    )}
+
+    <aside class="article__warning">
+      <h2>⚠ あなたや家族が被害に遭ったら</h2>
+      <ul>
+        <li><strong>📞 188</strong>（消費者ホットライン）── 最寄りの消費生活センターへ自動接続</li>
+        <li><strong>📞 #9110</strong>（警察相談専用電話）── 詐欺被害の届出</li>
+        <li><strong>🏛 金融庁 金融サービス利用者相談室</strong> ── 無登録業者の通報</li>
+        <li><strong>⚖ 弁護士会の法律相談</strong> ── 被害回復の法的手段</li>
+      </ul>
+    </aside>
+
+    {related.length > 0 && (
+      <section class="article__related">
+        <h2 class="article__related-h">同じカテゴリの取材記録</h2>
+        <div class="article__related-grid">
+          {related.map((r) => (
+            <a href={`/articles/${r.slug}/`} class="related-card">
+              <img src={`/ogp/${r.slug}.webp`} alt={r.title} loading="lazy" />
+              <div class="related-card__body">
+                <h3 class="related-card__title">{r.title}</h3>
+                <div class="related-card__meta">
+                  <span class="related-card__loss">¥{r.loss.toLocaleString()}-</span>
+                  <span class="related-card__who">{r.age}歳{r.gender} / {r.prefecture}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+        <p class="article__related-more">
+          <a href={`/category/${article.category}/`}>このカテゴリの全記事を見る →</a>
+        </p>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .article { max-width: 760px; margin: 0 auto; padding: 48px 24px 96px; color: var(--color-text); }
+  .article__breadcrumb { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 26px; letter-spacing: 0.04em; }
+  .article__breadcrumb a { color: var(--color-accent); text-decoration: none; }
+  .article__breadcrumb a:hover { color: var(--color-accent-soft); }
+  .article__breadcrumb span { margin: 0 6px; }
+  .article__head { padding-bottom: 32px; margin-bottom: 36px; border-bottom: 1px solid var(--color-border); }
+  .article__cat { display: inline-block; padding: 4px 14px; background: #fcebe5; color: var(--color-accent); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.18em; border-radius: 2px; margin-bottom: 16px; }
+  .article__title { font-size: 2rem; font-weight: 900; margin: 0 0 18px; line-height: 1.55; letter-spacing: 0.03em; font-family: var(--font-serif); color: var(--color-text); }
+  .article__scheme { font-size: 0.92rem; color: var(--color-text-soft); margin: 0 0 18px; line-height: 1.75; padding-left: 14px; border-left: 3px solid var(--color-accent); }
+  .article__loss { display: inline-flex; align-items: baseline; gap: 10px; padding: 12px 20px; background: #fcebe5; border: 1px solid #f5c8c0; border-radius: 4px; }
+  .article__loss-label { font-size: 0.78rem; color: var(--color-text-soft); letter-spacing: 0.18em; font-weight: 700; }
+  .article__loss-amt { font-family: "Helvetica Neue", sans-serif; font-size: 1.6rem; font-weight: 900; color: var(--color-loss); letter-spacing: 0.02em; }
+  /* === ペルソナBOX（投資失敗録風） === */
+  .persona-box {
+    margin: 0 0 36px;
+    padding: 22px 26px;
+    background: #fafaf8;
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-text);
+  }
+  .persona-box__title { font-family: var(--font-serif); font-size: 0.95rem; font-weight: 800; color: var(--color-text); letter-spacing: 0.1em; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--color-border-soft); }
+  .persona-box dl { display: grid; grid-template-columns: 130px 1fr; gap: 6px 16px; margin: 0; }
+  .persona-box dt { font-size: 0.78rem; color: var(--color-text-muted); font-weight: 700; letter-spacing: 0.08em; padding-top: 2px; }
+  .persona-box dd { font-size: 0.92rem; color: var(--color-text); margin: 0; line-height: 1.75; }
+  @media (max-width: 540px) { .persona-box dl { grid-template-columns: 1fr; gap: 2px 0; } .persona-box dt { margin-top: 8px; } }
+
+  /* === 警告アーカイブ印（副業詐欺録版・お焚き上げ相当） === */
+  .record-block {
+    margin: 56px 0 32px;
+    padding: 28px 24px 24px;
+    background: #fafaf8;
+    border: 1px solid var(--color-border);
+    text-align: center;
+  }
+  .record-block__sub { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--color-text-muted); font-weight: 700; margin-bottom: 18px; }
+  .record-seal {
+    display: inline-block;
+    padding: 18px 28px;
+    border: 3px solid var(--color-accent);
+    background: #fff;
+    position: relative;
+    min-width: 280px;
+  }
+  .record-seal::before, .record-seal::after {
+    content: ""; position: absolute; width: 18px; height: 18px;
+    border: 2px solid var(--color-accent);
+  }
+  .record-seal::before { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+  .record-seal::after { bottom: 4px; right: 4px; border-left: none; border-top: none; }
+  .record-seal__cat { font-family: var(--font-serif); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.2em; color: var(--color-accent); margin-bottom: 8px; }
+  .record-seal__name { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 800; color: var(--color-text); line-height: 1.4; margin-bottom: 10px; }
+  .record-seal__name small { display: block; font-size: 0.76rem; color: var(--color-text-soft); font-weight: 600; margin-top: 4px; letter-spacing: 0.06em; }
+  .record-seal__loss { font-family: "Helvetica Neue", sans-serif; font-size: 1.7rem; font-weight: 900; color: var(--color-loss); letter-spacing: 0.02em; padding: 8px 0; border-top: 1px dashed var(--color-border); border-bottom: 1px dashed var(--color-border); }
+  .record-seal__stamp { font-family: var(--font-serif); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.32em; color: var(--color-accent); margin-top: 10px; padding-top: 6px; }
+  .record-block__note { font-family: var(--font-serif); font-size: 0.86rem; color: var(--color-text-soft); margin: 18px 0 0; letter-spacing: 0.04em; font-style: italic; }
+
+  .article__body { line-height: 2.1; font-size: 1rem; color: var(--color-text); }
+  .article__body p { margin: 0 0 20px; }
+  .article__body h2 { font-size: 1.35rem; font-weight: 900; margin: 40px 0 18px; padding-left: 14px; border-left: 4px solid var(--color-accent); color: var(--color-text); font-family: var(--font-serif); }
+  .article__body strong { color: var(--color-accent); font-weight: 800; }
+  .article__body aside { margin: 32px 0; padding: 24px 26px; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 6px; box-shadow: var(--shadow-card); }
+  .article__body aside h2 { margin-top: 0; padding-left: 0; border-left: none; font-size: 1.1rem; }
+  .article__body aside dl { margin: 0; }
+  .article__body aside dt { font-size: 0.78rem; color: var(--color-accent); font-weight: 700; letter-spacing: 0.12em; margin-top: 10px; }
+  .article__body aside dd { margin: 0 0 6px; font-size: 0.9rem; color: var(--color-text-soft); }
+  .article__body aside.intake-record { background: var(--color-bg-soft); }
+  .article__body aside.admin-note { background: #fff7e6; border-color: #f0d27a; }
+  .article__body aside.admin-note h2 { color: #8a4218; }
+  .article__body aside.refund-meter { background: #fcebe5; border-color: #f5c8c0; }
+  .article__body aside.refund-meter h2 { color: var(--color-loss); }
+  .article__warning { margin-top: 56px; padding: 28px 32px; background: var(--color-bg-dark); color: var(--color-text-light); border: 1px solid var(--color-accent-2); border-radius: 6px; }
+  .article__warning h2 { font-size: 1.2rem; font-weight: 900; color: var(--color-accent-warn); margin: 0 0 18px; font-family: var(--font-serif); letter-spacing: 0.04em; }
+  .article__warning ul { list-style: none; padding: 0; margin: 0; }
+  .article__warning li { padding: 10px 0; font-size: 0.9rem; line-height: 1.85; color: rgba(247, 241, 227, 0.86); border-bottom: 1px dashed rgba(200, 154, 74, 0.2); }
+  .article__warning li:last-child { border-bottom: none; }
+  .article__warning strong { color: var(--color-accent-warn); }
+
+  .article__related { margin-top: 56px; padding-top: 36px; border-top: 1px solid var(--color-border); }
+  .article__related-h { font-size: 1.15rem; font-weight: 800; color: var(--color-text); margin: 0 0 22px; font-family: var(--font-serif); letter-spacing: 0.04em; }
+  .article__related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .related-card { display: block; padding: 0 0 14px; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; text-decoration: none; color: var(--color-text); transition: all 0.15s; }
+  .related-card:hover { transform: translateY(-2px); border-color: var(--color-accent); box-shadow: var(--shadow-card); }
+  .related-card img { width: 100%; aspect-ratio: 1200 / 630; object-fit: cover; display: block; border-bottom: 1px solid var(--color-border-soft); }
+  .related-card__body { padding: 12px 16px 0; }
+  .related-card__title { font-size: 0.84rem; font-weight: 700; margin: 0 0 10px; line-height: 1.6; font-family: var(--font-serif); color: var(--color-text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .related-card__meta { display: flex; flex-direction: column; gap: 4px; }
+  .related-card__loss { font-family: "Helvetica Neue", sans-serif; font-size: 0.94rem; font-weight: 800; color: var(--color-loss); }
+  .related-card__who { font-size: 0.72rem; color: var(--color-text-muted); }
+  .article__related-more { margin-top: 22px; text-align: right; }
+  .article__related-more a { color: var(--color-accent); font-size: 0.86rem; font-weight: 700; text-decoration: none; letter-spacing: 0.04em; }
+  .article__related-more a:hover { color: var(--color-accent-soft); }
+
+  @media (max-width: 720px) {
+    .article { padding: 32px 16px 60px; }
+    .article__title { font-size: 1.45rem; }
+    .article__body h2 { font-size: 1.1rem; }
+    .article__warning { padding: 22px 18px; }
+    .article__related-grid { grid-template-columns: 1fr; }
+  }
+</style>

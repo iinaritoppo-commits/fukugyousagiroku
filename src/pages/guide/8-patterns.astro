@@ -1,0 +1,222 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = "副業詐欺の典型8パターン 完全版｜手口・サイン・対応の総まとめ";
+const description = "副業詐欺の典型手口を、本サイトの取材記録から8パターンに整理。情報商材・MLM・コーチング・AI副業・投資副業・ロマンス・物販・海外案件。それぞれの勧誘の入口・段階課金構造・気づいた瞬間・返金交渉の実例まで、被害者本人取材ベースで総まとめ。";
+const updatedAt = "2026-05-27";
+
+const articleLD = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description: description,
+  datePublished: updatedAt,
+  dateModified: updatedAt,
+  author: { "@type": "Person", name: "白川", url: "https://fukugyousagiroku.com/about/" },
+  publisher: {
+    "@type": "Organization",
+    name: "副業詐欺録",
+    logo: { "@type": "ImageObject", url: "https://fukugyousagiroku.com/site-logo.svg" },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": "https://fukugyousagiroku.com/guide/8-patterns/" },
+  inLanguage: "ja-JP",
+};
+
+const breadcrumbs = [
+  { name: "副業詐欺録", url: "/" },
+  { name: "ガイド", url: "/guide/" },
+  { name: "副業詐欺の典型8パターン 完全版", url: "/guide/8-patterns/" },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  pageType="article"
+  articleMeta={{ headline: title, datePublished: updatedAt, dateModified: updatedAt, author: "白川", category: "ガイド / 副業詐欺総まとめ" }}
+  breadcrumbs={breadcrumbs}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleLD)} />
+
+  <article class="guide-page">
+    <nav class="bc">
+      <a href="/">トップ</a><span>›</span><a href="/guide/">ガイド</a><span>›</span><span>副業詐欺の典型8パターン</span>
+    </nav>
+
+    <header class="guide-head">
+      <span class="guide-head__cat">ガイド / 副業詐欺総まとめ</span>
+      <h1 class="guide-head__title">{title}</h1>
+      <p class="guide-head__lead">
+        副業詐欺の被害者本人を取材してきた中で、手口は大きく8つに分類できる。<br/>
+        ここでは、それぞれのパターンの入口・課金構造・気づいた瞬間・対応までを一覧できる形で整理する。
+      </p>
+      <div class="guide-head__meta">
+        <span><strong>更新</strong>{updatedAt}</span>
+        <span><strong>編集</strong>白川</span>
+      </div>
+    </header>
+
+    <section class="guide-section">
+      <h2>1. 情報商材型</h2>
+      <p>
+        <strong>入口：</strong>SNS広告・YouTube広告から LINE オプチャ登録。「コピペで月20万」「絶対稼げる」型の文言。<br />
+        <strong>課金構造：</strong>3万円の入門教材から始まり、上位プラン50万円・100万円と段階的に上がる。<br />
+        <strong>気づいた瞬間：</strong>マニュアル通りやっても収益化しない。サポートに質問するとさらに上位プランを勧められる。<br />
+        <strong>対応：</strong>クーリングオフ可能な期間内なら即実行。期限後はクレジットカード会社のチャージバックを検討。
+      </p>
+      <p><a href="/category/joho/">情報商材の被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>2. MLM型（ネットワークビジネス）</h2>
+      <p>
+        <strong>入口：</strong>知人からの「ちょっと話聞いてくれない？」勧誘。健康食品・化粧品・暗号資産が題材。<br />
+        <strong>課金構造：</strong>初期在庫の買取（30万円〜100万円）+ 月々の維持買取ノルマ。<br />
+        <strong>気づいた瞬間：</strong>下位の人を勧誘できない、在庫が捌けない、人間関係が崩壊し始める。<br />
+        <strong>対応：</strong>消費生活センター（188）相談 + 同じMLMの被害者ネットワークで情報収集。
+      </p>
+      <p><a href="/category/mlm/">MLMの被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>3. コーチング・コンサル型</h2>
+      <p>
+        <strong>入口：</strong>「無料相談」「無料コンサル」フックで個別面談に誘導。<br />
+        <strong>課金構造：</strong>個別コーチング契約 30万円〜300万円。月額更新型もある。<br />
+        <strong>気づいた瞬間：</strong>成果指標が曖昧、コーチが突然連絡途絶、契約書に返金条項なし。<br />
+        <strong>対応：</strong>契約書を持って弁護士相談。特定商取引法違反があれば返金交渉の余地あり。
+      </p>
+      <p><a href="/category/coach/">コーチングの被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>4. AI副業型</h2>
+      <p>
+        <strong>入口：</strong>「ChatGPTで月100万」「AI画像生成で稼ぐ」型のYouTube広告・SNS広告。<br />
+        <strong>課金構造：</strong>AIツール利用料 + スクール料金 60万円〜200万円。<br />
+        <strong>気づいた瞬間：</strong>提供されるのが無料のAI（ChatGPT等）のラッパーで、独自価値がない。<br />
+        <strong>対応：</strong>クレジットカードのチャージバック + 国民生活センター相談。
+      </p>
+      <p><a href="/category/ai/">AI副業の被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>5. 投資副業型</h2>
+      <p>
+        <strong>入口：</strong>「副業として安全な投資」「自動売買で月50万」型。金商法を回避する言い換えに注意。<br />
+        <strong>課金構造：</strong>ツール購入30万円 + 海外口座開設手数料 + 運用資金。<br />
+        <strong>気づいた瞬間：</strong>口座凍結で出金できない、運営者と連絡が取れない、約束された配当が止まる。<br />
+        <strong>対応：</strong>金融庁の登録業者確認・警察相談・弁護士相談（暗号資産送金は回収困難）。
+      </p>
+      <p><a href="/category/invest/">投資副業の被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>6. ロマンス商法型</h2>
+      <p>
+        <strong>入口：</strong>マッチングアプリ・SNS DMで「結婚前提」「投資の話を聞いてほしい」と接近。<br />
+        <strong>課金構造：</strong>段階的に金額が上がる送金（最初は数万円→数百万円）。多くは暗号資産送金で証拠が残りにくい。<br />
+        <strong>気づいた瞬間：</strong>送金後に連絡が途絶える、相手の身元が確認できない、写真が他人のもの。<br />
+        <strong>対応：</strong>警察への被害届・国際捜査の協力依頼・SNSプラットフォームへの通報。
+      </p>
+      <p><a href="/category/romance/">ロマンス商法の被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>7. 物販・転売型</h2>
+      <p>
+        <strong>入口：</strong>「Amazon物販で月30万」「メルカリ転売で月10万」型のスクール広告。<br />
+        <strong>課金構造：</strong>スクール料金 60万円〜120万円 + 仕入れ資金 + 在庫買取。<br />
+        <strong>気づいた瞬間：</strong>教材が一般情報レベル、利益率が広告ほど出ない、関税・規約違反で出品停止。<br />
+        <strong>対応：</strong>クーリングオフ・特定商取引法違反確認・在庫の処分計画。
+      </p>
+      <p><a href="/category/busshu/">物販の被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>8. 海外案件型</h2>
+      <p>
+        <strong>入口：</strong>「海外送金型」「ペーパーファンド」「越境EC」型の高利回り謳い。<br />
+        <strong>課金構造：</strong>海外口座への送金 100万円〜数千万円。元本保証を匂わせるケースが多い。<br />
+        <strong>気づいた瞬間：</strong>運営会社の登記が確認できない、出金できない、配当が止まる、回収不能。<br />
+        <strong>対応：</strong>金融庁・財務局への相談、国際弁護士、特殊詐欺としての警察相談。
+      </p>
+      <p><a href="/category/overseas/">海外案件の被害体験一覧 →</a></p>
+    </section>
+
+    <section class="guide-section">
+      <h2>8パターンに共通する見抜き方</h2>
+      <p>
+        どのパターンも、勧誘段階で以下のサインが出る。
+      </p>
+      <ol>
+        <li><strong>「絶対」「確実」「保証」</strong>が文言に入っている → 金融商品取引法・景品表示法違反の可能性</li>
+        <li><strong>「今だけ」「先着〇名」「残り3枠」</strong>と判断時間を奪う → 正規業者は時間制限で煽らない</li>
+        <li><strong>運営会社・特定商取引法表記が不明確</strong> → 法定要件を満たしていない</li>
+        <li><strong>LINE / Telegram など閉じたチャットへの誘導</strong> → 規制対象外の場所で勧誘文を出す導線</li>
+        <li><strong>無料コンサル・無料セミナーから有料へ</strong> → フックを無料にして判断停止を作る構造</li>
+      </ol>
+    </section>
+
+    <section class="guide-section guide-section--alert">
+      <h2>被害に遭ってしまった場合の対応フロー</h2>
+      <ol>
+        <li><strong>支払いを止める</strong>。月額契約は即解約、サブスクは決済停止。</li>
+        <li><strong>証拠を保存する</strong>。LINEのやり取り・契約書・送金記録・広告のスクリーンショット。</li>
+        <li><strong>消費生活センター（188）に相談</strong>。契約から8日以内ならクーリングオフ可能な場合あり。</li>
+        <li><strong>クレジットカード会社に連絡</strong>。チャージバック制度で取り戻せる場合あり。</li>
+        <li><strong>弁護士相談</strong>。被害額50万円以上なら弁護士依頼の費用対効果が出やすい。</li>
+        <li><strong>警察相談</strong>。詐欺罪の要件を満たす場合、被害届の提出を検討。</li>
+      </ol>
+      <p>
+        被害に遭ったことを家族に話せず一人で抱えるパターンが、最も回復が遅れる。<br />
+        まずは消費生活センター（188）に匿名で電話相談できる。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>関連の取材記録</h2>
+      <ul class="guide-related">
+        <li><a href="/guide/joho-line-pattern/">情報商材詐欺の勧誘LINE文面｜典型7パターン</a></li>
+        <li><a href="/category/jirei/">過去の有名な副業詐欺事案アーカイブ</a></li>
+        <li><a href="/about/">運営者・編集方針について</a></li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .guide-page { max-width: 780px; margin: 0 auto; padding: 0 24px 60px; }
+  .bc { font-size: 0.78rem; color: #666; margin: 20px 0 0; }
+  .bc a { color: #1a2f4e; text-decoration: none; }
+  .bc a:hover { text-decoration: underline; }
+  .bc span { margin: 0 6px; color: #c8201c; }
+
+  .guide-head { padding: 28px 0 22px; border-bottom: 2px solid #1a1a1a; margin-bottom: 28px; }
+  .guide-head__cat { display: inline-block; background: #1a1a1a; color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; padding: 5px 12px; margin-bottom: 14px; }
+  .guide-head__title { font-family: "Noto Serif JP", serif; font-size: clamp(1.4rem, 3.2vw, 1.75rem); font-weight: 700; color: #1a1a1a; margin: 0 0 14px; line-height: 1.55; letter-spacing: 0.04em; }
+  .guide-head__lead { margin: 0 0 16px; font-size: 0.96rem; color: #333; line-height: 2; }
+  .guide-head__meta { display: flex; gap: 18px; font-size: 0.8rem; color: #666; }
+  .guide-head__meta strong { color: #444; margin-right: 6px; }
+
+  .guide-section { margin: 32px 0; }
+  .guide-section h2 { font-family: "Noto Serif JP", serif; font-size: 1.22rem; font-weight: 700; color: #1a1a1a; margin: 0 0 14px; padding-bottom: 9px; border-bottom: 2px solid #1a1a1a; letter-spacing: 0.04em; }
+  .guide-section p { font-size: 0.95rem; line-height: 1.95; color: #1a1a1a; margin: 0 0 12px; }
+  .guide-section strong { color: #c8201c; }
+  .guide-section a { color: #1a2f4e; }
+
+  .guide-section--alert { background: #fbf6f5; border-left: 4px solid #c8201c; padding: 20px 22px; }
+  .guide-section--alert h2 { border-bottom-color: #c8201c; }
+  .guide-section--alert ol { padding-left: 22px; margin: 12px 0; }
+  .guide-section--alert li { margin-bottom: 8px; font-size: 0.93rem; line-height: 1.85; color: #1a1a1a; }
+
+  .guide-related { list-style: none; padding: 0; margin: 14px 0 0; }
+  .guide-related li { margin-bottom: 8px; padding: 10px 14px; background: #fff; border: 1px solid #ddd; border-left: 3px solid #c8201c; }
+  .guide-related a { color: #1a2f4e; text-decoration: none; font-weight: 600; font-size: 0.93rem; }
+  .guide-related a:hover { text-decoration: underline; }
+
+  @media (max-width: 540px) {
+    .guide-page { padding: 0 18px 50px; }
+    .guide-section h2 { font-size: 1.06rem; }
+  }
+</style>

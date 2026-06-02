@@ -1,0 +1,151 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { PREF_SLUG_MAP, SLUG_PREF_MAP } from "../../../lib/prefecture-slug";
+
+interface Article {
+  slug: string;
+  title: string;
+  category: string;
+  loss: number;
+  age: number;
+  gender: string;
+  prefecture: string;
+  description: string;
+}
+
+export async function getStaticPaths() {
+  const CAT_LABELS: Record<string, string> = {
+    joho: "情報商材", mlm: "MLM", coach: "コンサル詐欺", ai: "AI副業",
+    invest: "投資型副業", romance: "ロマンス商法", busshu: "物販系", overseas: "海外案件",
+  };
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const dir = path.default.join(process.cwd(), "approved");
+  if (!fs.default.existsSync(dir)) return [];
+
+  // 全記事から登場する都道府県だけページ化
+  const allArticles: any[] = [];
+  for (const f of fs.default.readdirSync(dir)) {
+    if (!f.endsWith(".json")) continue;
+    try {
+      const j = JSON.parse(fs.default.readFileSync(path.default.join(dir, f), "utf-8"));
+      if (j.slug && j.title && j.persona?.prefecture) allArticles.push(j);
+    } catch {}
+  }
+
+  const prefSet = new Set<string>();
+  for (const a of allArticles) {
+    if (a.persona?.prefecture) prefSet.add(a.persona.prefecture);
+  }
+
+  const paths: any[] = [];
+  for (const prefName of prefSet) {
+    const slug = PREF_SLUG_MAP[prefName];
+    if (!slug) continue;
+    const articles: Article[] = allArticles
+      .filter((a: any) => a.persona?.prefecture === prefName)
+      .map((a: any) => ({
+        slug: a.slug,
+        title: a.title,
+        category: CAT_LABELS[a.category] ?? a.category,
+        loss: a.loss_amount_yen ?? 0,
+        age: a.persona?.age ?? 0,
+        gender: a.persona?.gender ?? "",
+        prefecture: a.persona?.prefecture ?? "",
+        description: a.description ?? "",
+      }))
+      .sort((x: Article, y: Article) => y.loss - x.loss);
+    paths.push({ params: { pref: slug }, props: { prefName, articles } });
+  }
+  return paths;
+}
+
+const { prefName, articles } = Astro.props as { prefName: string; articles: Article[] };
+const totalLoss = articles.reduce((s, a) => s + a.loss, 0);
+const totalLossLabel = totalLoss >= 1e8
+  ? `${(totalLoss / 1e8).toFixed(1)}億円`
+  : `${Math.round(totalLoss / 1e4).toLocaleString()}万円`;
+---
+<BaseLayout
+  title={`${prefName}の副業詐欺事例（${articles.length}件）`}
+  description={`${prefName}で記録された副業詐欺の取材記録 ${articles.length}件。累計被害額 ${totalLossLabel}。情報商材・MLM・投資型副業・ロマンス商法など。`}
+>
+  <main class="pref-page">
+    <nav class="breadcrumb"><a href="/">トップ</a> ＞ <a href="/#section-map">エリア</a> ＞ {prefName}</nav>
+
+    <header class="pref-hero">
+      <span class="pref-hero__sub">PREFECTURE</span>
+      <h1 class="pref-hero__title">{prefName}</h1>
+      <p class="pref-hero__lead">
+        {prefName}で記録された副業詐欺の取材記録一覧。
+      </p>
+      <div class="pref-hero__stats">
+        <div class="pref-hero__stat">
+          <span class="pref-hero__stat__label">記録件数</span>
+          <span class="pref-hero__stat__val">{articles.length}<small>件</small></span>
+        </div>
+        <div class="pref-hero__stat">
+          <span class="pref-hero__stat__label">累計被害額</span>
+          <span class="pref-hero__stat__val pref-hero__stat__val--accent">{totalLossLabel}</span>
+        </div>
+      </div>
+    </header>
+
+    {articles.length === 0 && (
+      <div class="empty">この都道府県の取材記録はまだありません。</div>
+    )}
+
+    <ul class="pref-list">
+      {articles.map((a) => (
+        <li class="pref-card">
+          <a href={`/articles/${a.slug}/`}>
+            <div class="pref-card__head">
+              <span class="pref-card__cat">{a.category}</span>
+              <span class="pref-card__loss">¥{a.loss.toLocaleString()}-</span>
+            </div>
+            <h3 class="pref-card__title">{a.title}</h3>
+            <div class="pref-card__meta">{a.age}歳{a.gender} / {prefName}</div>
+            {a.description && <p class="pref-card__desc">{a.description}</p>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+
+  <style>
+    .pref-page { max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; font-family: var(--font-sans); }
+    .breadcrumb { font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 24px; }
+    .breadcrumb a { color: var(--color-text-soft); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-accent); }
+
+    .pref-hero { padding: 36px 0 32px; border-bottom: 2px solid var(--color-text); margin-bottom: 32px; }
+    .pref-hero__sub { display: inline-block; font-size: 0.7rem; letter-spacing: 0.45em; color: var(--color-accent); font-weight: 700; margin-bottom: 14px; }
+    .pref-hero__title { font-size: 2.4rem; margin: 0 0 14px; font-family: var(--font-serif); font-weight: 900; color: var(--color-text); letter-spacing: 0.06em; }
+    .pref-hero__lead { color: var(--color-text-soft); font-size: 0.95rem; margin: 0 0 22px; line-height: 1.9; }
+    .pref-hero__stats { display: flex; gap: 32px; padding-top: 12px; }
+    .pref-hero__stat { display: flex; flex-direction: column; gap: 6px; }
+    .pref-hero__stat__label { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--color-text-muted); font-weight: 700; }
+    .pref-hero__stat__val { font-size: 1.7rem; font-weight: 900; color: var(--color-text); font-family: "Helvetica Neue", sans-serif; }
+    .pref-hero__stat__val--accent { color: var(--color-accent); }
+    .pref-hero__stat__val small { font-size: 0.85rem; margin-left: 4px; font-weight: 700; color: var(--color-text-soft); }
+
+    .empty { padding: 80px 20px; text-align: center; color: var(--color-text-muted); border: 1px dashed var(--color-border); }
+
+    .pref-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .pref-card { border: 1px solid var(--color-border); background: var(--color-bg-card); transition: all 0.18s; }
+    .pref-card:hover { border-color: var(--color-text); box-shadow: var(--shadow-card-hover); }
+    .pref-card a { display: block; padding: 18px 22px; text-decoration: none; color: inherit; }
+    .pref-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 12px; }
+    .pref-card__cat { display: inline-block; padding: 3px 10px; background: var(--color-text); color: #fff; font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 700; }
+    .pref-card__loss { color: var(--color-accent); font-weight: 900; font-size: 1.05rem; font-family: "Helvetica Neue", sans-serif; letter-spacing: 0.02em; }
+    .pref-card__title { font-family: var(--font-serif); font-size: 1.08rem; font-weight: 700; margin: 0 0 6px; color: var(--color-text); line-height: 1.6; }
+    .pref-card__meta { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 6px; }
+    .pref-card__desc { font-size: 0.85rem; color: var(--color-text-soft); margin: 0; line-height: 1.75; }
+
+    @media (max-width: 540px) {
+      .pref-hero__title { font-size: 1.8rem; }
+      .pref-hero__stat__val { font-size: 1.4rem; }
+      .pref-card a { padding: 14px 16px; }
+    }
+  </style>
+</BaseLayout>

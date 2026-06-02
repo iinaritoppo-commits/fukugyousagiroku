@@ -1,0 +1,123 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonicalUrl?: string;
+  pageType?: "website" | "article";
+  articleMeta?: {
+    headline?: string;
+    datePublished?: string;
+    dateModified?: string;
+    author?: string;
+    category?: string;
+  };
+  breadcrumbs?: { name: string; url: string }[];
+}
+
+const {
+  title,
+  description = "副業詐欺・情報商材詐欺の実例まとめ。読者投稿に基づく告発アーカイブ。",
+  image = "/og-default.png",
+  canonicalUrl,
+  pageType = "website",
+  articleMeta,
+  breadcrumbs,
+} = Astro.props;
+
+const siteName = "副業詐欺録";
+const siteUrl = "https://fukugyousagiroku.com";
+const authorName = "白川";
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const url = canonicalUrl ?? Astro.url.href;
+const fullImage = image.startsWith("http") ? image : `${siteUrl}${image}`;
+
+const organization = {
+  "@type": "Organization",
+  "name": siteName,
+  "url": siteUrl,
+  "logo": {
+    "@type": "ImageObject",
+    "url": `${siteUrl}/site-logo.svg`,
+  },
+};
+
+const website = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": siteName,
+  "url": siteUrl,
+  "description": description,
+  "publisher": organization,
+  "inLanguage": "ja-JP",
+};
+
+const blogPosting = pageType === "article" && articleMeta ? {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": articleMeta.headline ?? title,
+  "description": description,
+  "image": fullImage,
+  "url": url,
+  "datePublished": articleMeta.datePublished ?? "2026-05-01",
+  "dateModified": articleMeta.dateModified ?? articleMeta.datePublished ?? "2026-05-01",
+  "author": {
+    "@type": "Person",
+    "name": articleMeta.author ?? authorName,
+    "url": `${siteUrl}/about/`,
+  },
+  "publisher": {
+    ...organization,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/site-logo.svg`,
+    },
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": url,
+  },
+  ...(articleMeta.category ? { "articleSection": articleMeta.category } : {}),
+  "inLanguage": "ja-JP",
+} : null;
+
+const breadcrumbList = breadcrumbs && breadcrumbs.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbs.map((b, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "name": b.name,
+    "item": b.url.startsWith("http") ? b.url : `${siteUrl}${b.url}`,
+  })),
+} : null;
+---
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={url} />
+
+<!-- OGP -->
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={fullImage} />
+<meta property="og:url" content={url} />
+<meta property="og:type" content={pageType === "article" ? "article" : "website"} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content="ja_JP" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={fullImage} />
+
+<!-- JSON-LD: WebSite / Organization -->
+<script type="application/ld+json" set:html={JSON.stringify(website)} />
+
+{blogPosting && (
+  <script type="application/ld+json" set:html={JSON.stringify(blogPosting)} />
+)}
+
+{breadcrumbList && (
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbList)} />
+)}

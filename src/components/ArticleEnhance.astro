@@ -1,0 +1,187 @@
+---
+/**
+ * 記事強化コンポーネント：目次・読了時間・シェアボタン
+ * 各サイト共通。content（HTML）の冒頭に挿入。
+ */
+interface Props {
+  content: string;       // 記事本文HTML
+  title: string;         // 記事タイトル（X共有用）
+  url: string;           // 記事URL（シェア用）
+}
+const { content, title, url } = Astro.props;
+
+// 文字数から読了時間（500字/分）
+const plain = content.replace(/<[^>]+>/g, "");
+const charCount = plain.length;
+const minutes = Math.max(1, Math.ceil(charCount / 500));
+
+// H2見出しを抽出して目次に
+const h2Matches = [...content.matchAll(/<h2[^>]*>(.*?)<\/h2>/gs)];
+const toc = h2Matches.map((m, i) => ({
+  id: `toc-${i + 1}`,
+  text: m[1].replace(/<[^>]+>/g, "").trim(),
+}));
+
+const encodedTitle = encodeURIComponent(title);
+const encodedUrl = encodeURIComponent(url);
+---
+<div class="article-enhance">
+  <div class="article-enhance__meta">
+    <span class="article-enhance__time">📖 約 {minutes} 分で読めます（{charCount.toLocaleString()}字）</span>
+  </div>
+
+  {toc.length > 1 && (
+    <details class="article-enhance__toc" open>
+      <summary>目次</summary>
+      <ol>
+        {toc.map((t) => (
+          <li><a href={`#${t.id}`}>{t.text}</a></li>
+        ))}
+      </ol>
+    </details>
+  )}
+</div>
+
+<div class="article-share">
+  <span class="article-share__label">共有：</span>
+  <a class="article-share__btn article-share__btn--x"
+     href={`https://x.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
+     target="_blank" rel="noopener" aria-label="Xで共有">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    <span>X</span>
+  </a>
+  <a class="article-share__btn article-share__btn--line"
+     href={`https://line.me/R/msg/text/?${encodedTitle}%0A${encodedUrl}`}
+     target="_blank" rel="noopener" aria-label="LINEで共有">
+    <span>LINE</span>
+  </a>
+  <button class="article-share__btn article-share__btn--copy" data-url={url} aria-label="URLをコピー">
+    <span>URLコピー</span>
+  </button>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('.article-share__btn--copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const url = btn.dataset.url;
+      try {
+        await navigator.clipboard.writeText(url);
+        const orig = btn.querySelector('span').textContent;
+        btn.querySelector('span').textContent = 'コピー済';
+        setTimeout(() => { btn.querySelector('span').textContent = orig; }, 2000);
+      } catch (e) {}
+    });
+  });
+
+  // H2 にid付与（目次のアンカー用）
+  document.querySelectorAll('.article__body h2, .art-body h2').forEach((h, i) => {
+    if (!h.id) h.id = `toc-${i + 1}`;
+  });
+</script>
+
+<style>
+  .article-enhance {
+    margin: 24px 0 32px;
+    padding: 18px 22px;
+    background: #fafaf8;
+    border-left: 4px solid var(--color-accent, #c8201c);
+  }
+  .article-enhance__meta {
+    font-size: 0.84rem;
+    color: var(--color-text-soft, #4a4a4a);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .article-enhance__toc {
+    margin-top: 12px;
+    border-top: 1px dashed var(--color-border, #d8d8d8);
+    padding-top: 12px;
+  }
+  .article-enhance__toc summary {
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--color-text, #1a1a1a);
+    font-family: var(--font-serif, serif);
+    letter-spacing: 0.06em;
+    padding: 4px 0;
+  }
+  .article-enhance__toc ol {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    counter-reset: toc;
+    list-style: none;
+  }
+  .article-enhance__toc li {
+    margin: 6px 0;
+    position: relative;
+    counter-increment: toc;
+  }
+  .article-enhance__toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    position: absolute;
+    left: -20px;
+    color: var(--color-accent, #c8201c);
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    top: 2px;
+  }
+  .article-enhance__toc a {
+    color: var(--color-text-soft, #4a4a4a);
+    text-decoration: none;
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+  .article-enhance__toc a:hover {
+    color: var(--color-accent, #c8201c);
+    text-decoration: underline;
+  }
+
+  .article-share {
+    margin: 40px 0 32px;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--color-border, #d8d8d8);
+    border-bottom: 1px solid var(--color-border, #d8d8d8);
+  }
+  .article-share__label {
+    font-size: 0.84rem;
+    color: var(--color-text-muted, #5a5a5a);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-right: 6px;
+  }
+  .article-share__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--color-text, #1a1a1a);
+    background: #fff;
+    color: var(--color-text, #1a1a1a);
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .article-share__btn:hover {
+    background: var(--color-text, #1a1a1a);
+    color: #fff;
+  }
+  .article-share__btn--x:hover { background: #000; color: #fff; border-color: #000; }
+  .article-share__btn--line { background: #06c755; color: #fff; border-color: #06c755; }
+  .article-share__btn--line:hover { background: #04a544; border-color: #04a544; color: #fff; }
+  .article-share__btn--copy { font-family: inherit; }
+
+  @media (max-width: 540px) {
+    .article-enhance { padding: 14px 16px; }
+    .article-share { gap: 8px; }
+    .article-share__btn { padding: 7px 11px; font-size: 0.78rem; }
+  }
+</style>

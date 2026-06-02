@@ -1,0 +1,602 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = "副業詐欺の見抜き方 完全版2026｜LINEオプチャから過去事案まで全パターン解説";
+const description = "副業詐欺の典型手口を、本サイトの取材記録から9つに整理。情報商材・MLM・AI副業・コーチング・ロマンス商法・物販スクール・海外案件・投資型副業・過去事案。それぞれの勧誘の入口・段階課金構造・気付いた瞬間・家族との会話・返金交渉の実例まで、被害者本人取材ベースで総まとめ。";
+const updatedAt = "2026-06-02";
+
+const breadcrumbs = [
+  { name: "副業詐欺録", url: "/" },
+  { name: "ガイド", url: "/guide/" },
+  { name: "副業詐欺の見抜き方 完全版", url: "/guide/sidejob-fraud-master/" },
+];
+
+const articleLD = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description,
+  datePublished: updatedAt,
+  dateModified: updatedAt,
+  author: { "@type": "Person", name: "白川", url: "https://fukugyousagiroku.com/about/" },
+  publisher: {
+    "@type": "Organization",
+    name: "副業詐欺録",
+    logo: { "@type": "ImageObject", url: "https://fukugyousagiroku.com/site-logo.svg" },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": "https://fukugyousagiroku.com/guide/sidejob-fraud-master/" },
+  inLanguage: "ja-JP",
+  articleSection: "副業詐欺 / 全パターン解説",
+};
+
+const faqLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "副業詐欺で最も多い勧誘の入口はどこですか",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "本サイトの取材記録のなかで最も多い入口は『LINEオープンチャット（オプチャ）からの個別DM誘導』『Instagram広告の無料説明会』『マッチングアプリ／SNS経由のロマンス商法』の3つ。共通点は『最初は無料・無リスクに見える設計』『個別DMで信頼関係を作ってから有料化』『LINEオプチャに人が集まることで集団心理が働く』点です。",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "副業詐欺の典型的な金額帯はいくらですか",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "本サイトの取材記録では、入口商品は20万円〜80万円が最も多い帯。情報商材30万円、AI副業教材40万円、コンサル50万円、ライティングスクール48万円など。その後に上位プラン（60〜180万円）への階段型勧誘が続く設計が一般的です。最初の20〜80万円は『稼げない状態の入口』として設計されていることが多く、修了時点で『稼げないので上位プランへ』という流れになります。",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "申込前に必ず確認すべき3点は何ですか",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "1）成果指標の検証可能性（『3か月で月収100万円』の根拠は何か）、2）家族や独立した第三者への共有（一晩持ち帰る）、3）提供物の実態（独自教材か汎用ツールのラッパーか）。この3点を必ず確認します。即決を求められる勧誘は、ほぼ全て後悔につながります。",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "返金交渉は可能ですか",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "クーリングオフ期間（契約から8日間）を過ぎていても、不実告知・断定的判断の提供・連鎖販売取引該当性が立証できれば取消の余地があります。返金可能性は手口によって差が大きく、本サイトの取材記録では『5〜15%が現実的な目安』のケースが多いです。詳しくは消費生活センター（188）と弁護士相談（法テラス 0570-078374 が初手として無料相談可）。",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "LINEオプチャの情報商材を見抜くサインは何ですか",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "1）『無料で情報配ってます』と書きつつ最終的に個別DM誘導が前提、2）成功者の証言が同じ構文で複数アカウントから投稿される、3）『先着3名限定』が無限に湧くキャンセル待ち、4）参加者数が異常に多い（数千人）、の4点が典型的なサインです。発見した時点で抜ける判断が現実的です。",
+      },
+    },
+  ],
+};
+---
+<BaseLayout
+  title={title}
+  description={description}
+  pageType="article"
+  articleMeta={{
+    headline: title,
+    datePublished: updatedAt,
+    dateModified: updatedAt,
+    author: "白川",
+    category: "ガイド / 副業詐欺 全パターン解説",
+  }}
+  breadcrumbs={breadcrumbs}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleLD)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLD)} />
+
+  <article class="pillar">
+    <nav class="bc">
+      <a href="/">副業詐欺録</a><span>›</span>
+      <a href="/guide/">ガイド</a><span>›</span>
+      <span>副業詐欺の見抜き方 完全版</span>
+    </nav>
+
+    <header class="pillar-header">
+      <span class="pillar-eyebrow">SIDEJOB FRAUD MASTER GUIDE</span>
+      <h1>副業詐欺の見抜き方 完全版<br><small>LINEオプチャから過去事案まで全パターン解説（2026年版）</small></h1>
+      <p class="pillar-lead">
+        本サイト『副業詐欺録』には、副業詐欺で被害を出した方の取材記録が累積している。
+        本人の同意を得て、勧誘の流れ・払った金額・気付いた瞬間・家族との会話までを記録している。
+        この記事は、そこから繰り返し出てくる<strong>9つの典型パターン</strong>を、
+        手口・サイン・対応の3軸で整理した総合ガイドだ。
+      </p>
+      <p class="pillar-meta">
+        編集者：白川 ／ 最終更新：{updatedAt} ／ 想定読了時間：約25分
+      </p>
+    </header>
+
+    <section class="toc">
+      <h2>目次</h2>
+      <ol>
+        <li><a href="#intro">副業詐欺の3つの構造的特徴</a></li>
+        <li><a href="#pattern-01">パターン 1：LINEオプチャ情報商材 ─ 個別DM誘導の入口</a></li>
+        <li><a href="#pattern-02">パターン 2：MLM（連鎖販売） ─ 人間関係が崩れる仕組み</a></li>
+        <li><a href="#pattern-03">パターン 3：AI副業教材 ─ 汎用ツールのラッパー</a></li>
+        <li><a href="#pattern-04">パターン 4：コンサル詐欺 ─ 階段型上位プラン勧誘</a></li>
+        <li><a href="#pattern-05">パターン 5：ロマンス商法 ─ マッチングアプリ起点</a></li>
+        <li><a href="#pattern-06">パターン 6：物販スクール ─ 在庫買取と陳腐化リスト</a></li>
+        <li><a href="#pattern-07">パターン 7：海外案件 ─ 越境送金で証拠が残らない</a></li>
+        <li><a href="#pattern-08">パターン 8：投資型副業 ─ 副業の顔をした金融商品</a></li>
+        <li><a href="#pattern-09">パターン 9：過去事案（ジャパンライフ等） ─ 高齢者ターゲット</a></li>
+        <li><a href="#common-structure">9パターンの共通構造</a></li>
+        <li><a href="#judgment-framework">申込前 5つの判断フレーム</a></li>
+        <li><a href="#family-conversation">家族との話し方</a></li>
+        <li><a href="#after-damage">被害発覚後の動き方</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ol>
+    </section>
+
+    <section id="intro">
+      <h2>副業詐欺の3つの構造的特徴</h2>
+      <p>
+        本サイトの取材記録を整理すると、副業詐欺には3つの構造的な共通点が見える。
+      </p>
+      <p>
+        <strong>1つ目は『無料・無リスクに見える入口』</strong>。
+        LINEオプチャの無料情報、Instagram広告の無料説明会、マッチングアプリの『投資の話』、
+        新聞折込の『無料セミナー』。最初の接点では金銭の発生がない設計になる。
+      </p>
+      <p>
+        <strong>2つ目は『個別DM／個別面談で信頼関係を作る』段階</strong>。
+        オープンな場での発信と、クローズドな場での勧誘を分けるのが典型的な設計だ。
+        個別の場面では、ターゲットの属性（年齢・収入・家族構成・副業経験）に合わせた
+        提案を組み立てる時間が確保される。
+      </p>
+      <p>
+        <strong>3つ目は『階段型の段階課金』</strong>。
+        入口は20〜80万円、次が60〜120万円、最上位が120〜500万円。
+        最初の階段は『稼げない状態の入口』として設計されていることが多く、
+        修了時点で『稼げないので上位プランへ』という流れが起きる構造になっている。
+      </p>
+      <p>
+        以下、本サイトに集まった9つの典型パターンを、手口・気付いた瞬間・判断軸の3点で整理する。
+      </p>
+    </section>
+
+    <section id="pattern-01" class="pattern-block">
+      <h2>パターン 1：LINEオプチャ情報商材 ─ 個別DM誘導の入口</h2>
+      <p>
+        LINEオープンチャット（オプチャ）経由の情報商材は、副業詐欺で最も増えている入口の一つ。
+        『無料情報配ってます』『過去の成果を全部公開してます』というスタイルで参加者を集め、
+        個別DMで有料商品（教材・コンサル・ツール）へ誘導する設計だ。
+      </p>
+      <p>
+        典型的な構造：オプチャ参加者数は500〜数千人。管理人と複数の『成功者』を名乗るアカウントが
+        毎日投稿する。投稿内容は、収益スクショ・成功者の声・特定の手法の概要紹介。
+        参加者の質問に管理人が個別DMで返信する形式が多い。
+      </p>
+      <p>
+        実例：本サイトに届いた取材記録で、LINEオプチャから個別DM経由で60万円のAI副業教材を契約した
+        28歳女性のケースがある。提供物は汎用ChatGPTの薄いラッパーだった、と本人。
+        オプチャ参加から契約まで約3週間、その間に毎日DMで信頼関係が作られる設計だった。
+      </p>
+      <p>
+        判断軸：『オプチャ内で完結する取引なら不要、個別DM誘導が前提なら抜ける』。
+        詳しい手口の解説は<a href="/guide/joho-line-pattern/">この記事</a>、
+        情報商材カテゴリの取材記録は<a href="/category/joho/">こちら</a>。
+        X（旧Twitter）からLINEオプチャ経由で38万円の教材を契約した27歳女性の取材記録は
+        <a href="/articles/fukugyo-joho-010/">こちら</a>も併読推奨。
+      </p>
+    </section>
+
+    <section id="pattern-02" class="pattern-block">
+      <h2>パターン 2：MLM（連鎖販売） ─ 人間関係が崩れる仕組み</h2>
+      <p>
+        MLM（マルチレベルマーケティング・連鎖販売取引）は、健康食品・化粧品・暗号資産・
+        副業教材などを連鎖紹介で販売する形式。
+        副業詐欺の文脈では、『商品の販売』より『新規入会者の紹介報酬』が収益の中心になる構造を持つ。
+      </p>
+      <p>
+        典型的な構造：友人・知人・職場の同僚から『良い話があるんだけど』『一度だけ話を聞いて』
+        という連絡が入る。最初は飲食を伴うカジュアルな場で、商品サンプルや過去の成功事例が
+        紹介される。実質的な契約段階で、初期在庫の買取・月の最低発注金額が条件として提示される。
+      </p>
+      <p>
+        実例：本サイトの取材記録で、MLM健康食品の在庫買取で約240万円の借金が残った34歳女性のケース。
+        友人からの勧誘で参加、人間関係の維持が抜けられない理由になり、抜けた後も友人関係を失った、
+        と本人。
+      </p>
+      <p>
+        判断軸：『商品の実利益と、紹介報酬の比率』を確認する。紹介報酬の比率が高い設計は、
+        連鎖販売取引として特商法の規制対象。
+        MLMカテゴリの取材記録は<a href="/category/mlm/">こちら</a>。
+      </p>
+    </section>
+
+    <section id="pattern-03" class="pattern-block">
+      <h2>パターン 3：AI副業教材 ─ 汎用ツールのラッパー</h2>
+      <p>
+        AI副業教材は、2024年以降に急増している新型の副業詐欺。
+        『AIで月収100万円』『ChatGPTで自動収益化』『画像生成で副業月収50万円』という訴求で、
+        20〜80万円の教材を販売する設計が一般的だ。
+      </p>
+      <p>
+        典型的な構造：Instagram広告・YouTube広告・TikTok広告から無料説明会へ誘導。
+        90分の説明会で、AI技術の概要・成功事例・教材内容・割引価格（『今月のみ10万円割引』）を
+        提示する。教材内容はChatGPT・Stable Diffusion・Midjourney等の汎用ツールの使い方解説で、
+        独自性が薄いケースが多い。
+      </p>
+      <p>
+        実例：本サイトの取材記録で、『AIで月収100万円』を謳う60万円の教材を契約した28歳女性。
+        提供物は汎用ChatGPTのラッパーで、独自手法はほぼ含まれていなかった、と本人。
+        修了時点で副業収入はゼロ、上位プラン80万円の勧誘が続いた。
+      </p>
+      <p>
+        判断軸：『教材の独自性』『汎用ツールとの差』『成功事例の検証可能性』の3点。
+        AI副業カテゴリの取材記録は<a href="/category/ai/">こちら</a>。
+      </p>
+    </section>
+
+    <section id="pattern-04" class="pattern-block">
+      <h2>パターン 4：コンサル詐欺 ─ 階段型上位プラン勧誘</h2>
+      <p>
+        起業コンサル・人生再設計コンサル・副業ライティングスクールなど、コンサル系の高額講座は、
+        副業詐欺の典型カテゴリの一つ。本サイトに集まる取材記録で、入口40〜90万円、
+        上位プランで180〜300万円という階段型の課金設計が繰り返し報告されている。
+      </p>
+      <p>
+        典型的な構造：Twitter（X）・YouTubeでフォロワー数千〜数万のコンサルタントが、
+        個別DMから無料体験コンサルへ誘導。体験コンサルで『今のペースだと5年経っても辞められない』
+        『3か月で月収100万円のビジネスモデル設計』という個別提案で90万円の3か月プログラムを契約させる。
+      </p>
+      <p>
+        実例：本サイトの取材記録で、Twitter経由の起業コンサル90万円を契約した38歳男性のケース。
+        受講内容の半分が『コンサル業の運営手法』に偏り、2か月目以降にブランディング80万円・
+        セールス120万円の上位プラン勧誘が続いた、と本人。修了時点で副業の売上は1円も増えていなかった。
+      </p>
+      <p>
+        実例②：副業ライティングスクール48万円を契約した34歳女性のケース。
+        月3本の添削枠は副業スキルとして成立するには明らかに不足、中級プラン60万円への切り替えを
+        勧められた。
+      </p>
+      <p>
+        判断軸：『最初の階段で修了時点で成果が出る設計か』『上位プラン勧誘の頻度』。
+        コンサルカテゴリの取材記録は<a href="/category/coach/">こちら</a>、
+        詳しい代表的な8つの手口は<a href="/guide/8-patterns/">この記事</a>。
+      </p>
+    </section>
+
+    <section id="pattern-05" class="pattern-block">
+      <h2>パターン 5：ロマンス商法 ─ マッチングアプリ起点</h2>
+      <p>
+        ロマンス商法は、マッチングアプリ・SNS・出会い系で出会った相手から、
+        恋愛関係の延長として投資の話を持ちかけられる手口。本サイトに届く取材記録で、
+        近年特に増えているカテゴリの一つだ。
+      </p>
+      <p>
+        典型的な構造：マッチングアプリで知り合い、数週間から数か月のメッセージ・通話で
+        信頼関係を作る。相手のプロフィールは『投資で生計を立てている』『海外在住』『医師・弁護士』
+        など、信頼性の高い職業を名乗ることが多い。関係が深まった段階で、暗号資産・海外FX・
+        プラットフォーム投資の話を持ちかけられる。
+      </p>
+      <p>
+        実例：本サイトの取材記録で、マッチングアプリで出会った相手から暗号資産プラットフォームへの
+        投資を勧められ、25万円を送金した42歳男性のケース。送金後、相手のアカウントが消失。
+        暗号資産送金は証拠が残りにくく、回収は極めて困難。
+      </p>
+      <p>
+        判断軸：『相手の身元の検証可能性』『送金前の家族／友人への共有』。
+        ロマンス商法カテゴリの取材記録は<a href="/category/romance/">こちら</a>。
+      </p>
+    </section>
+
+    <section id="pattern-06" class="pattern-block">
+      <h2>パターン 6：物販スクール ─ 在庫買取と陳腐化リスト</h2>
+      <p>
+        Amazon物販・転売・せどりのスクールは、副業詐欺カテゴリで継続的に報告されているパターン。
+        『仕入れリストと販売手法を学べば月収30万円』『未経験から3か月で副業独立』という訴求で、
+        50〜150万円の高額教材を販売する設計が一般的だ。
+      </p>
+      <p>
+        典型的な構造：YouTube広告・LINEオプチャから無料説明会へ誘導。
+        説明会で『限定の仕入れリスト』『過去の成功者の月収スクショ』が提示される。
+        契約後、提供される仕入れリストは公開情報の組み合わせが多く、競合の参入で陳腐化しやすい。
+        さらに、初期在庫の買取が条件として組み込まれているケースもある。
+      </p>
+      <p>
+        判断軸：『仕入れリストの独自性』『過去の受講生の現在の継続率』『初期在庫リスクの所在』。
+        物販カテゴリの取材記録は<a href="/category/busshu/">こちら</a>。
+      </p>
+    </section>
+
+    <section id="pattern-07" class="pattern-block">
+      <h2>パターン 7：海外案件 ─ 越境送金で証拠が残らない</h2>
+      <p>
+        海外バイナリーオプション・海外FX・海外不動産・越境ECなどの海外案件は、
+        『日本の規制対象外』『高利回り』『税制優遇』という訴求で勧誘される。
+        被害発覚後の国内法での回収が極めて困難な構造を持つ。
+      </p>
+      <p>
+        典型的な構造：LINEオプチャ・SNS・コンサルタント経由で海外プラットフォームへの登録を勧める。
+        入金は暗号資産送金・国際送金で素早く処理される一方、出金は本人確認書類の再提出、
+        手数料発生、ボーナス分の取引量達成、など複数のステップが挟まれる。
+        最終的に運営側のサーバーが応答しなくなる、業者が業務停止する、というパターンも報告されている。
+      </p>
+      <p>
+        判断軸：『金商法登録業者か（金融庁の登録業者リスト確認）』『出金実績の検証可能性』。
+        海外案件カテゴリの取材記録は<a href="/category/overseas/">こちら</a>。
+      </p>
+    </section>
+
+    <section id="pattern-08" class="pattern-block">
+      <h2>パターン 8：投資型副業 ─ 副業の顔をした金融商品</h2>
+      <p>
+        投資型副業は、副業の名前で金融商品的なリターンを提供する設計の手口。
+        『副業として安全な投資』『自動売買で月収50万円』『コピートレードで放置でOK』という訴求で、
+        金商法の規制を回避する言い換えが使われることが多い。
+      </p>
+      <p>
+        典型的な構造：FX自動売買ツール・コピートレード・暗号資産アービトラージなどを
+        『副業ツール』として販売。ツール本体が10〜30万円、追加のサポート契約が月数万円という設計。
+        ツール販売者は、提携FX業者からのIB報酬（紹介手数料）も得ている構造があり、
+        利用者がトレードで損失を出すほど業者からの報酬が増えるケースもある。
+      </p>
+      <p>
+        判断軸：『販売者の収益構造（ツール販売収益＋IB報酬）』『過去の運用記録の検証可能性』。
+        投資型副業カテゴリの取材記録は<a href="/category/invest/">こちら</a>、
+        姉妹サイト『投資失敗録』の<a href="https://toushishippairoku.com/explain/fx-jido-baibai-sagi/" target="_blank" rel="noopener">FX自動売買詐欺の構造解説</a>も参考。
+      </p>
+    </section>
+
+    <section id="pattern-09" class="pattern-block">
+      <h2>パターン 9：過去事案（ジャパンライフ等） ─ 高齢者ターゲット</h2>
+      <p>
+        ジャパンライフ・安愚楽牧場・L&amp;G・テキシアジャパン・AIJ投資顧問など、
+        過去に判決済または社会的に公表済の有名事案は、本サイトでは『過去事案』カテゴリとして整理している。
+        これらは現在進行形の手口ではないが、構造を理解することで現在の副業詐欺・投資詐欺の
+        共通点が見える資料的価値を持つ。
+      </p>
+      <p>
+        典型的な構造：高齢者層を主なターゲットに、定期セミナー・営業所訪問・配当の定期支給で
+        信頼関係を構築。配当原資は新規入会者の入金が中心。経営破綻まで違和感が表面化しないケースが多い。
+      </p>
+      <p>
+        実例：ジャパンライフ社の磁気治療器に1,200万円預けた78歳女性のケース。
+        営業所セミナーの信頼感、家族に内緒の契約、経営破綻まで気付けなかった経緯を本人取材で記録。
+      </p>
+      <p>
+        判断軸：『配当原資が運用益か、新規入会者の資金か』『運営側の財務情報の開示』。
+        過去事案カテゴリの取材記録は<a href="/category/jirei/">こちら</a>。
+      </p>
+    </section>
+
+    <section id="common-structure">
+      <h2>9パターンの共通構造</h2>
+      <p>
+        9つの典型パターンを並べると、3つの共通点が浮かび上がる。
+      </p>
+      <h3>共通点 1：『無料・無リスクの入口』から『個別DM／個別面談』へ</h3>
+      <p>
+        オープンな場での発信は、信頼感の演出と参加者集めに使われる。
+        個別の場面に移行した時点から、ターゲットに合わせた説得が開始される。
+        個別DMが提案された時点で『一度立ち止まる』判断が現実的だ。
+      </p>
+      <h3>共通点 2：『階段型の段階課金』</h3>
+      <p>
+        入口20〜80万円、中級60〜120万円、上級120〜500万円。
+        最初の階段は『稼げない状態の入口』として設計されていることが多く、
+        修了時点で『稼げないので上位プランへ』という流れが起きる。
+        最初の入口で『3か月後に成果が出る』と説明されていても、修了時点で『完成形ではない』と
+        言われるパターンが本サイトの取材記録に多く登場する。
+      </p>
+      <h3>共通点 3：『家族に黙って契約』</h3>
+      <p>
+        本サイトの取材記録で、被害者の多くが『家族には事後報告』『パートナーには副業の勉強会と説明』
+        という形で初期契約を完了している。被害が発覚した時、配偶者からの最初の質問が
+        <strong>『なんで一人で決めたの』</strong>だった、という証言が繰り返し登場する。
+        即決を求める勧誘設計は、家族会議を経ない判断を促進する構造を持つ。
+      </p>
+    </section>
+
+    <section id="judgment-framework">
+      <h2>申込前 5つの判断フレーム</h2>
+      <p>
+        9パターンの共通構造から逆算すると、副業の申込前に最低限通すべきフレームは5つだ。
+      </p>
+      <h3>フレーム 1：『成果指標の検証可能性』</h3>
+      <p>
+        『3か月で月収100万円』『未経験から月収30万円』。
+        その数字の根拠は何か。誰の口座での記録か。
+        受講生の現在の継続率は何%か。過去3年の修了生が今も継続している割合は。
+        検証できない数字は、判断材料として使えない。
+      </p>
+      <h3>フレーム 2：『家族・第三者への共有』</h3>
+      <p>
+        契約前に必ず一晩持ち帰る。配偶者・成人した子ども・独立した第三者（既に副業をしている友人など）
+        に説明できる内容か確認する。説明した時点で違和感を指摘されたら、それは正しい違和感である
+        可能性が高い。
+      </p>
+      <h3>フレーム 3：『提供物の独自性』</h3>
+      <p>
+        その教材・ツール・コンサルで提供されるものは、汎用情報の組み合わせか、
+        独自の手法か。汎用ChatGPTのラッパー、公開仕入れリストの組み合わせ、
+        コンサル業の運営手法など、独自性のない提供物が高額で販売されているケースが多い。
+      </p>
+      <h3>フレーム 4：『販売側の利益構造』</h3>
+      <p>
+        その商品で、販売側はどう儲けるのか。教材販売収益、上位プラン勧誘、紹介報酬、
+        IB報酬（FX業者からの紹介手数料）。販売側の利益構造が分かれば、商品設計の理由が見える。
+      </p>
+      <h3>フレーム 5：『即決を求められたら抜ける』</h3>
+      <p>
+        『今月の枠はあと2席』『次回開講は3か月後』『キャンペーン今月末まで』『先着3名限定』。
+        即決を求める言葉は、判断時間を短縮させるための典型的な言葉として使われる。
+        即決を求められた時点で『一度持ち帰る』判断が現実的だ。
+      </p>
+    </section>
+
+    <section id="family-conversation">
+      <h2>家族との話し方</h2>
+      <p>
+        本サイトの取材記録で、もう一つ繰り返し登場するのが『家族に黙って契約した』というパターンだ。
+        情報商材、MLM、AI副業、コンサル、ライティングスクール、ロマンス商法。
+        被害が発覚した時に、配偶者から最初に投げかけられた言葉が
+        <strong>『なんで一人で決めたの』</strong>だった、という証言が多い。
+      </p>
+      <p>
+        副業判断は本人の責任だが、契約金額が大きくなるほど『家族の生活設計』に直結する。
+        20万円以上の契約は、配偶者・家族と共有してから判断する設計に切り替えるタイミングだ。
+      </p>
+      <p>
+        家族会議で確認する最低限の項目は、契約商品名・契約金額・想定リターン・想定リスク・
+        解約条件・販売側の利益構造・3か月後／6か月後／1年後の想定シナリオの7つ。
+        これを一晩持ち帰ったうえで判断する設計に変えると、即決を求める勧誘の大半を回避できる。
+      </p>
+    </section>
+
+    <section id="after-damage">
+      <h2>被害発覚後の動き方</h2>
+      <p>
+        既に被害が発生している場合は、以下の順序で動く。
+      </p>
+      <ol class="action-list">
+        <li><strong>証拠保全</strong>：契約書、教材、メール・LINE・DMのやり取り、説明会の資料、オプチャの履歴、入金履歴を全部保管する。</li>
+        <li><strong>家族への共有</strong>：配偶者・成人した子どもに状況を共有する。一人で判断を続けると、上位プラン勧誘で追加被害につながりやすい。</li>
+        <li><strong>追加課金の停止</strong>：『今やめると稼げないままで終わる』『上位プランに切り替えれば取り戻せる』という説明は、被害拡大の典型パターン。同じ業者への追加課金は止める。</li>
+        <li><strong>消費生活センター（188）</strong>：電話相談無料。担当者がケースの分類と次のステップを案内してくれる。クーリングオフ期間内（契約から8日間・連鎖販売取引は20日間）なら、その場で書面の書き方も案内可能。</li>
+        <li><strong>弁護士相談</strong>：金額が大きい場合、または不実告知・断定的判断の提供・連鎖販売取引該当性が立証できそうな場合。法テラス（0570-078374）が初手として無料相談可能。詳しい返金交渉のフローは<a href="/guide/refund-flow/">この記事</a>。</li>
+      </ol>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+      <details>
+        <summary>副業詐欺で最も多い勧誘の入口はどこですか</summary>
+        <p>
+          本サイトの取材記録のなかで最も多い入口は『LINEオープンチャット（オプチャ）からの個別DM誘導』
+          『Instagram広告の無料説明会』『マッチングアプリ／SNS経由のロマンス商法』の3つ。
+          共通点は『最初は無料・無リスクに見える設計』『個別DMで信頼関係を作ってから有料化』
+          『LINEオプチャに人が集まることで集団心理が働く』点。
+        </p>
+      </details>
+      <details>
+        <summary>副業詐欺の典型的な金額帯はいくらですか</summary>
+        <p>
+          本サイトの取材記録では、入口商品は20万円〜80万円が最も多い帯。
+          情報商材30万円、AI副業教材40万円、コンサル50万円、ライティングスクール48万円など。
+          その後に上位プラン（60〜180万円）への階段型勧誘が続く設計が一般的。
+          最初の20〜80万円は『稼げない状態の入口』として設計されていることが多い。
+        </p>
+      </details>
+      <details>
+        <summary>申込前に必ず確認すべき3点は何ですか</summary>
+        <p>
+          1）成果指標の検証可能性（『3か月で月収100万円』の根拠は何か）、
+          2）家族や独立した第三者への共有（一晩持ち帰る）、
+          3）提供物の実態（独自教材か汎用ツールのラッパーか）。
+          この3点を必ず確認する。即決を求められる勧誘は、ほぼ全て後悔につながる。
+        </p>
+      </details>
+      <details>
+        <summary>返金交渉は可能ですか</summary>
+        <p>
+          クーリングオフ期間（契約から8日間、連鎖販売取引は20日間）を過ぎていても、
+          不実告知・断定的判断の提供・連鎖販売取引該当性が立証できれば取消の余地がある。
+          返金可能性は手口によって差が大きく、本サイトの取材記録では『5〜15%が現実的な目安』のケースが多い。
+          詳しくは消費生活センター（188）と弁護士相談（法テラス 0570-078374 が初手として無料相談可）。
+        </p>
+      </details>
+      <details>
+        <summary>LINEオプチャの情報商材を見抜くサインは何ですか</summary>
+        <p>
+          1）『無料で情報配ってます』と書きつつ最終的に個別DM誘導が前提、
+          2）成功者の証言が同じ構文で複数アカウントから投稿される、
+          3）『先着3名限定』が無限に湧くキャンセル待ち、
+          4）参加者数が異常に多い（数千人）、の4点が典型的なサイン。
+          発見した時点で抜ける判断が現実的。
+        </p>
+      </details>
+    </section>
+
+    <section class="conclusion">
+      <h2>まとめ</h2>
+      <p>
+        副業詐欺は、9パターンに分けると見通しが立ちやすい。
+        いずれも『無料・無リスクの入口』から『個別DM／個別面談で信頼関係』を作り、
+        『階段型の段階課金』で20万円→60万円→180万円と上位プラン勧誘へ続く設計を持つ。
+      </p>
+      <p>
+        判断軸は5つ。<strong>成果指標の検証可能性、家族・第三者への共有、提供物の独自性、
+        販売側の利益構造、即決を求められたら抜ける</strong>。
+        この5つを通したうえで残った副業は、検討に値する設計と言える。
+      </p>
+      <p>
+        個別の取材記録は、サイト内の<a href="/articles/">手口一覧</a>から検索できる。
+        カテゴリ別の整理は<a href="/category/joho/">情報商材</a>・
+        <a href="/category/mlm/">MLM</a>・<a href="/category/ai/">AI副業</a>・
+        <a href="/category/coach/">コンサル</a>・<a href="/category/invest/">投資型副業</a>・
+        <a href="/category/romance/">ロマンス商法</a>・<a href="/category/busshu/">物販</a>・
+        <a href="/category/overseas/">海外案件</a>・<a href="/category/jirei/">過去事案</a>に分類している。
+      </p>
+      <p>
+        本サイト『副業詐欺録』は、特定業者の評価や推奨はしない。
+        副業詐欺の構造を整理して、判断材料として残すアーカイブだ。
+      </p>
+      <p class="last-update">最終更新：{updatedAt}　編集：白川</p>
+    </section>
+  </article>
+
+  <style>
+    .pillar {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 20px 96px;
+      color: var(--color-text);
+      line-height: 1.95;
+    }
+    .bc { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 20px; letter-spacing: 0.04em; }
+    .bc a { color: var(--color-text-soft); text-decoration: none; }
+    .bc a:hover { color: var(--color-accent); }
+    .bc span { margin: 0 6px; }
+    .pillar-header { padding: 32px 0 28px; border-bottom: 2px solid var(--color-border); margin-bottom: 36px; }
+    .pillar-eyebrow { display: inline-block; font-size: 0.7rem; letter-spacing: 0.36em; color: var(--color-accent); font-weight: 700; margin-bottom: 14px; }
+    .pillar-header h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.45; font-family: var(--font-serif); font-weight: 900; margin: 0 0 22px; letter-spacing: 0.04em; }
+    .pillar-header h1 small { display: block; font-size: 0.65em; color: var(--color-text-soft); margin-top: 12px; font-weight: 700; }
+    .pillar-lead { font-size: 1.05rem; color: var(--color-text); margin: 0 0 18px; }
+    .pillar-lead strong { color: var(--color-accent); }
+    .pillar-meta { font-size: 0.82rem; color: var(--color-text-muted); margin: 0; }
+
+    .toc { background: #faf7f3; border: 1px solid var(--color-border); padding: 24px 28px; margin-bottom: 36px; border-radius: 4px; }
+    .toc h2 { font-size: 1.1rem; margin: 0 0 14px; font-family: var(--font-serif); color: var(--color-text); border: none; padding: 0; }
+    .toc ol { margin: 0; padding-left: 22px; font-size: 0.92rem; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { color: var(--color-accent); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    .pillar h2 { font-size: 1.5rem; font-family: var(--font-serif); font-weight: 900; color: var(--color-text); margin: 48px 0 18px; padding-bottom: 10px; border-bottom: 2px solid var(--color-accent); letter-spacing: 0.04em; }
+    .pillar h3 { font-size: 1.15rem; font-family: var(--font-serif); font-weight: 800; color: var(--color-text); margin: 28px 0 12px; padding-left: 14px; border-left: 4px solid var(--color-accent); }
+    .pillar p { margin: 0 0 16px; }
+    .pillar p strong { color: var(--color-accent); background: linear-gradient(transparent 60%, #fff0e8 60%); padding: 0 3px; }
+    .pillar a { color: var(--color-accent); }
+    .pattern-block { background: #fffdfb; border: 1px solid var(--color-border); border-left: 4px solid var(--color-accent); padding: 24px 28px; margin: 36px 0; border-radius: 0 4px 4px 0; }
+    .pattern-block h2 { margin-top: 0; border-bottom: none; padding-bottom: 0; }
+
+    .action-list { padding-left: 22px; }
+    .action-list li { margin-bottom: 12px; }
+    .action-list li strong { color: var(--color-accent); }
+
+    details { border: 1px solid var(--color-border); margin-bottom: 10px; padding: 14px 18px; border-radius: 4px; background: #fff; }
+    details summary { cursor: pointer; font-weight: 700; color: var(--color-text); font-family: var(--font-serif); }
+    details[open] summary { margin-bottom: 10px; }
+    details p { margin: 0; font-size: 0.95rem; }
+
+    .conclusion { margin-top: 60px; padding: 28px; background: #faf7f3; border: 1px solid var(--color-border); border-radius: 4px; }
+    .conclusion h2 { margin-top: 0; }
+    .last-update { font-size: 0.82rem; color: var(--color-text-muted); margin: 16px 0 0; }
+
+    @media (max-width: 640px) {
+      .pillar { padding: 16px 14px 64px; }
+      .toc { padding: 18px 16px; }
+      .pattern-block { padding: 18px 16px; }
+      .conclusion { padding: 20px 16px; }
+    }
+  </style>
+</BaseLayout>

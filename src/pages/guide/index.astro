@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = "副業詐欺ガイド｜手口・サイン・対応の解説まとめ";
+const description = "副業詐欺の典型手口・勧誘の初手サイン・被害後の対応を、取材ベースで整理した解説記事のまとめ。情報商材・MLM・コーチング・AI副業など、カテゴリ別に被害を未然に防ぐためのガイド集。";
+
+const guides = [
+  {
+    href: "/guide/sidejob-fraud-master/",
+    title: "副業詐欺の見抜き方 完全版2026｜LINEオプチャから過去事案まで全パターン解説",
+    summary: "情報商材・MLM・AI副業・コーチング・ロマンス商法・物販・海外案件・投資型副業・過去事案。9つの典型パターンを手口・サイン・対応の3軸で総まとめ。判断フレーム5つとFAQ完備。",
+    cat: "🆕 ピラー記事",
+  },
+  {
+    href: "/guide/8-patterns/",
+    title: "副業詐欺の典型8パターン 完全版｜手口・サイン・対応の総まとめ",
+    summary: "情報商材・MLM・コーチング・AI副業・投資副業・ロマンス・物販・海外案件。被害者本人取材ベースで8つの典型手口を整理。",
+    cat: "総まとめ",
+  },
+  {
+    href: "/guide/refund-flow/",
+    title: "副業詐欺の返金 弁護士相談の流れ｜本人取材で見えた対応ステップ",
+    summary: "被害発覚から返金実現までの段階別フロー。証拠保全・消費生活センター・クレジットカード会社・弁護士相談・少額訴訟・警察被害届。被害金額別の現実的選択肢。",
+    cat: "被害後対応",
+  },
+  {
+    href: "/guide/joho-line-pattern/",
+    title: "情報商材詐欺の勧誘LINE文面｜典型7パターン",
+    summary: "「絶対稼げる」「コピペで月◯万」「枠が残り◯名」など、返信を控えるべき初手のサインを実例から整理。",
+    cat: "情報商材",
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="guide-index">
+    <header class="guide-index__head">
+      <span class="guide-index__sub">GUIDE</span>
+      <h1>副業詐欺ガイド</h1>
+      <p>取材で見えた手口・サイン・対応を、カテゴリ別に整理した解説まとめ。</p>
+    </header>
+
+    <ul class="guide-index__list">
+      {guides.map((g) => (
+        <li>
+          <a href={g.href}>
+            <span class="guide-index__cat">{g.cat}</span>
+            <h2>{g.title}</h2>
+            <p>{g.summary}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</BaseLayout>
+
+<style>
+  .guide-index { max-width: 780px; margin: 0 auto; padding: 40px 24px 60px; }
+  .guide-index__head { padding: 0 0 24px; border-bottom: 2px solid #1a1a1a; margin-bottom: 28px; text-align: center; }
+  .guide-index__sub { display: inline-block; font-size: 0.74rem; letter-spacing: 0.3em; color: #c8201c; font-weight: 700; margin-bottom: 12px; }
+  .guide-index__head h1 { font-family: "Noto Serif JP", serif; font-size: 1.8rem; color: #1a1a1a; margin: 0 0 12px; letter-spacing: 0.05em; }
+  .guide-index__head p { color: #555; margin: 0; font-size: 0.96rem; line-height: 1.9; }
+  .guide-index__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .guide-index__list li { background: #fff; border: 1px solid #ddd; border-left: 4px solid #c8201c; }
+  .guide-index__list a { display: block; padding: 18px 22px; text-decoration: none; color: inherit; }
+  .guide-index__list a:hover { background: #fbf6f5; }
+  .guide-index__cat { display: inline-block; background: #1a1a1a; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .guide-index__list h2 { font-family: "Noto Serif JP", serif; font-size: 1.1rem; margin: 0 0 6px; color: #1a1a1a; line-height: 1.55; }
+  .guide-index__list p { font-size: 0.88rem; color: #555; margin: 0; line-height: 1.75; }
+  @media (max-width: 540px) {
+    .guide-index { padding: 30px 18px 50px; }
+    .guide-index__head h1 { font-size: 1.45rem; }
+  }
+</style>

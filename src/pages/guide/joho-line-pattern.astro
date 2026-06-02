@@ -1,0 +1,222 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = "情報商材詐欺の勧誘LINE文面｜典型7パターンと返信を控えるべきサイン";
+const description = "副業情報商材の勧誘LINE文面を、被害者本人から聞いた実例ベースで7パターン整理。「絶対稼げる」「コピペで月◯万」「枠が残り◯名」など、返信を控えるべき初手のサインと、すでに連絡してしまった場合の対応を編集者がまとめる。";
+const updatedAt = "2026-05-26";
+
+const articleLD = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description: description,
+  datePublished: updatedAt,
+  dateModified: updatedAt,
+  author: { "@type": "Person", name: "白川", url: "https://fukugyousagiroku.com/about/" },
+  publisher: {
+    "@type": "Organization",
+    name: "副業詐欺録",
+    logo: { "@type": "ImageObject", url: "https://fukugyousagiroku.com/site-logo.svg" },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": "https://fukugyousagiroku.com/guide/joho-line-pattern/" },
+  inLanguage: "ja-JP",
+};
+
+const breadcrumbs = [
+  { name: "副業詐欺録", url: "/" },
+  { name: "ガイド", url: "/guide/" },
+  { name: "情報商材詐欺の勧誘LINE文面", url: "/guide/joho-line-pattern/" },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  pageType="article"
+  articleMeta={{ headline: title, datePublished: updatedAt, dateModified: updatedAt, author: "白川", category: "情報商材 / ガイド" }}
+  breadcrumbs={breadcrumbs}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleLD)} />
+
+  <article class="guide-page">
+    <nav class="bc">
+      <a href="/">トップ</a><span>›</span><span>情報商材詐欺の勧誘LINE文面</span>
+    </nav>
+
+    <header class="guide-head">
+      <span class="guide-head__cat">情報商材 / ガイド</span>
+      <h1 class="guide-head__title">{title}</h1>
+      <p class="guide-head__lead">
+        被害者本人から聞いた「初手のLINE文面」を整理すると、7つの型に分かれる。<br/>
+        どれか1つでも当てはまった時点で、返信を控える判断材料になる。
+      </p>
+      <div class="guide-head__meta">
+        <span><strong>更新</strong>{updatedAt}</span>
+        <span><strong>編集</strong>白川</span>
+      </div>
+    </header>
+
+    <section class="guide-section">
+      <h2>1. 「絶対稼げる」型</h2>
+      <p>
+        初手で「絶対」「確実」「100%」が入る文面。<br/>
+        「絶対稼げる副業を紹介できます」「確実に月50万の収入になります」など。
+      </p>
+      <p>
+        金融商品取引法、特定商取引法、景品表示法。どれを参照しても「絶対稼げる」という勧誘は規制対象。<br/>
+        正規の業者がこのワードを使うことはない。「絶対」が出た時点で、相手は規制を知らないか、知っていて無視している。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>2. 「コピペで月◯万」型</h2>
+      <p>
+        「コピペで月20万」「マニュアル通りに作業すれば月50万」など、作業の単純さと金額を強調する文面。
+      </p>
+      <p>
+        コピペで稼げる仕組みは、原理的に長く続かない。<br/>
+        誰でも再現できる手法は、参加者が増えるほど1人あたりの利益が薄まる。<br/>
+        本当に稼げる手法を売る理由がない。
+      </p>
+      <p>
+        「初心者でも」「経験不問」「スマホ1台で」が同時に入っていたら、この型と判断する。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>3. 「残り◯枠」型</h2>
+      <p>
+        「残り3名限定」「先着10名様」「今月で募集終了」など、希少性を煽る文面。
+      </p>
+      <p>
+        実際の枠数を確認する方法は無い。「残り3名」と言われた1ヶ月後に同じアカウントから「残り3名」と来るケースを、取材で複数確認している。
+      </p>
+      <p>
+        正規のスクール・コンサルでも枠数はあるが、「今すぐ決めないと損する」という焦らせ方はしない。<br/>
+        判断時間を奪う文面は、判断させたくない側の意図が透けている。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>4. 「無料コンサル」型</h2>
+      <p>
+        「無料で個別コンサルします」「初回のみ無料相談」など、フックを無料にする文面。
+      </p>
+      <p>
+        無料コンサルの中身は、ほぼ「有料の本コースの案内」になる。<br/>
+        無料時間のうち、最後の3分の1で「特別価格」「今だけ」が出てくる構成が定番。
+      </p>
+      <p>
+        無料相談自体が悪いわけではない。<br/>
+        ただし、「無料相談に行った後で、断れずに有料契約してしまった」という被害体験が、取材で繰り返し出てくる。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>5. 「個人で発信してます」型</h2>
+      <p>
+        「会社ではなく個人で発信しています」「業者ではないので営業じゃないです」と前置きする文面。
+      </p>
+      <p>
+        個人を装うことで、規制の網から外れているように見せる構造。<br/>
+        実際には特定商取引法の表記義務が個人にも適用される。「個人発信」を理由に表記を省略している時点で、法的にグレー。
+      </p>
+      <p>
+        本当に個人で発信している人は、こうした前置きをしない。<br/>
+        「個人」を強調する人ほど、後ろに組織がいる可能性が高い。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>6. 「副業の枠で年収◯倍」型</h2>
+      <p>
+        「会社員のまま副業で年収3倍にした人がいます」「副業で本業を超える人が続出」など、ビフォーアフターを強調する文面。
+      </p>
+      <p>
+        「年収◯倍」の根拠を確認する手段がない。<br/>
+        実績画面のスクリーンショットも、編集ソフトで作れる。第三者監査の収支報告書を添付している例は、取材した中ではゼロ。
+      </p>
+      <p>
+        「成功者の声」が並んでいる場合も同じ。多くは演者か、最初の入金者を「成功例」として広告に流用している。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>7. 「LINEで詳しく説明します」型</h2>
+      <p>
+        SNS広告・YouTube広告・ブログのコメント欄から、「詳しくはLINEで」「公式LINEで限定情報」とLINE登録に誘導する文面。
+      </p>
+      <p>
+        LINEは「閉じた1対1のやり取り」になる。証拠が残るが、第三者が見ない。<br/>
+        広告審査の届かない場所で、規制対象になりうる勧誘文を出す導線になる。
+      </p>
+      <p>
+        本当に良い商品・サービスは、LINEに閉じる必要がない。<br/>
+        公式サイトに価格・特定商取引法表記・運営会社情報が明記されていて、判断材料が揃っている。
+      </p>
+    </section>
+
+    <section class="guide-section guide-section--alert">
+      <h2>すでに返信してしまった場合</h2>
+      <p>
+        7つのうち1つでも当てはまる文面に返信してしまった場合、以下の順で対応する。
+      </p>
+      <ol>
+        <li><strong>その場で契約・入金しない</strong>。「今すぐ」を促されても、必ず一晩置く。</li>
+        <li><strong>運営会社・特定商取引法表記を確認する</strong>。表記がない or 連絡がつかない場合、相手は法定要件を満たしていない。</li>
+        <li><strong>LINEのやり取りを画面録画・スクショで保存する</strong>。後日の証拠になる。</li>
+        <li><strong>家族・友人に「こんな勧誘が来た」と話す</strong>。第三者の視点を入れる。判断が逆転することが多い。</li>
+        <li><strong>消費生活センター（188）に相談する</strong>。契約前でも相談できる。</li>
+      </ol>
+      <p>
+        既に支払ってしまった場合は、決済方法（クレジットカード／銀行振込／暗号資産）ごとに対応が変わる。<br/>
+        クレジットカードならカード会社のチャージバック、銀行振込なら振り込め詐欺救済法、暗号資産は弁護士相談が必要になる。
+      </p>
+    </section>
+
+    <section class="guide-section">
+      <h2>関連の取材記録</h2>
+      <ul class="guide-related">
+        <li><a href="/category/joho/">情報商材詐欺の実話記録（カテゴリ一覧）</a></li>
+        <li><a href="/category/ai/">AI副業詐欺の実話記録</a></li>
+        <li><a href="/category/coach/">コーチング詐欺の実話記録</a></li>
+        <li><a href="/about/">運営者・編集方針について</a></li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .guide-page { max-width: 780px; margin: 0 auto; padding: 0 24px 60px; }
+  .bc { font-size: 0.78rem; color: #666; margin: 20px 0 0; }
+  .bc a { color: #1a2f4e; text-decoration: none; }
+  .bc a:hover { text-decoration: underline; }
+  .bc span { margin: 0 6px; color: #c8201c; }
+
+  .guide-head { padding: 28px 0 22px; border-bottom: 2px solid #1a1a1a; margin-bottom: 28px; }
+  .guide-head__cat { display: inline-block; background: #1a1a1a; color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; padding: 5px 12px; margin-bottom: 14px; }
+  .guide-head__title { font-family: "Noto Serif JP", serif; font-size: clamp(1.4rem, 3.2vw, 1.75rem); font-weight: 700; color: #1a1a1a; margin: 0 0 14px; line-height: 1.55; letter-spacing: 0.04em; }
+  .guide-head__lead { margin: 0 0 16px; font-size: 0.96rem; color: #333; line-height: 2; }
+  .guide-head__meta { display: flex; gap: 18px; font-size: 0.8rem; color: #666; }
+  .guide-head__meta strong { color: #444; margin-right: 6px; }
+
+  .guide-section { margin: 32px 0; }
+  .guide-section h2 { font-family: "Noto Serif JP", serif; font-size: 1.22rem; font-weight: 700; color: #1a1a1a; margin: 0 0 14px; padding-bottom: 9px; border-bottom: 2px solid #1a1a1a; letter-spacing: 0.04em; }
+  .guide-section p { font-size: 0.95rem; line-height: 1.95; color: #1a1a1a; margin: 0 0 12px; }
+  .guide-section strong { color: #c8201c; }
+
+  .guide-section--alert { background: #fbf6f5; border-left: 4px solid #c8201c; padding: 20px 22px; }
+  .guide-section--alert h2 { border-bottom-color: #c8201c; }
+  .guide-section--alert ol { padding-left: 22px; margin: 12px 0; }
+  .guide-section--alert li { margin-bottom: 8px; font-size: 0.93rem; line-height: 1.85; color: #1a1a1a; }
+
+  .guide-related { list-style: none; padding: 0; margin: 14px 0 0; }
+  .guide-related li { margin-bottom: 8px; padding: 10px 14px; background: #fff; border: 1px solid #ddd; border-left: 3px solid #c8201c; }
+  .guide-related a { color: #1a2f4e; text-decoration: none; font-weight: 600; font-size: 0.93rem; }
+  .guide-related a:hover { text-decoration: underline; }
+
+  @media (max-width: 540px) {
+    .guide-page { padding: 0 18px 50px; }
+    .guide-section h2 { font-size: 1.06rem; }
+  }
+</style>

@@ -1,0 +1,9 @@
+# 副業詐欺録 robots.txt
+User-agent: *
+Allow: /
+
+# Disallow technical paths
+Disallow: /api/
+Disallow: /_astro/
+
+Sitemap: https://fukugyousagiroku.com/sitemap-index.xml

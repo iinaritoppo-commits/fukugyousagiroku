@@ -1,0 +1,114 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+type Entry = {
+  slug: string;
+  title: string;
+  category: string;
+  catKey: string;
+  scheme: string;
+  loss: number;
+  age?: number | string;
+  gender?: string;
+  prefecture?: string;
+};
+const entries: Entry[] = [];
+const CAT_LABEL: Record<string, string> = {
+  joho: "情報商材", mlm: "MLM", coach: "コンサル詐欺",
+  ai: "AI副業", invest: "投資型副業", romance: "ロマンス商法",
+  busshu: "物販系", overseas: "海外案件",
+};
+try {
+  const dir = path.join(process.cwd(), "approved");
+  for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"));
+      if (typeof j.loss_amount_yen === "number") {
+        entries.push({
+          slug: j.slug,
+          title: j.title,
+          catKey: j.category,
+          category: CAT_LABEL[j.category] ?? j.category ?? "",
+          scheme: j.scheme ?? "",
+          loss: j.loss_amount_yen,
+          age: j.persona?.age ?? "",
+          gender: j.persona?.gender ?? "",
+          prefecture: j.persona?.prefecture ?? "",
+        });
+      }
+    } catch {}
+  }
+} catch {}
+
+// 損失額降順
+entries.sort((a, b) => b.loss - a.loss);
+
+const formatLoss = (yen: number) => `¥${yen.toLocaleString()}-`;
+const totalLossLabel = formatLoss(entries.reduce((s, e) => s + e.loss, 0));
+---
+<BaseLayout title="手口記録一覧 - 副業詐欺録" description="情報商材・MLM・コンサル詐欺・AI副業・投資型副業・ロマンス商法・物販系・海外案件、全41記事の取材記録一覧。">
+  <section class="list-hero">
+    <div class="list-hero__inner">
+      <span class="list-hero__sub">ALL CASES</span>
+      <h1 class="list-hero__title">手口記録 一覧</h1>
+      <p class="list-hero__lead">取材済みの全 {entries.length} 件。被害額が大きい順に並んでいます。</p>
+      <div class="list-hero__stats">
+        <span><strong>{entries.length}</strong> 件</span>
+        <span class="list-hero__stats__loss"><strong>{totalLossLabel}</strong> 累計</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="all-grid">
+      {entries.map((e) => (
+        <a href={`/articles/${e.slug}/`} class="case-card">
+          <div class="case-card__thumb">
+            <img src={`/ogp/${e.slug}.png`} alt={e.title} loading="lazy" width="600" height="315" />
+          </div>
+          <div class="case-card__body">
+            <span class="case-card__cat">{e.category}</span>
+            <h3 class="case-card__title">{e.title}</h3>
+            <div class="case-card__meta">
+              <span class="case-card__loss">{formatLoss(e.loss)}</span>
+              <span class="case-card__who">{e.age}歳{e.gender} / {e.prefecture}</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <style>
+    .list-hero { background: linear-gradient(140deg, #0f1622 0%, #1a2230 55%, #1f2a3c 100%); padding: 72px 24px 56px; color: #f7f1e3; }
+    .list-hero__inner { max-width: 1080px; margin: 0 auto; }
+    .list-hero__sub { display: block; font-size: 0.7rem; letter-spacing: 0.5em; color: #c89a4a; font-weight: 700; margin-bottom: 16px; }
+    .list-hero__title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 900; margin: 0 0 14px; letter-spacing: 0.06em; font-family: var(--font-serif); }
+    .list-hero__lead { color: rgba(247, 241, 227, 0.86); margin: 0 0 20px; font-size: 0.96rem; }
+    .list-hero__stats { display: flex; gap: 24px; font-size: 0.94rem; flex-wrap: wrap; }
+    .list-hero__stats span { color: rgba(247, 241, 227, 0.86); }
+    .list-hero__stats strong { color: #f0c060; font-weight: 900; font-family: "Helvetica Neue", sans-serif; font-size: 1.2em; }
+    .list-hero__stats__loss strong { color: #e6a02a; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 48px 24px 96px; }
+    .all-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+    .case-card { display: block; padding: 0 0 18px; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; text-decoration: none; color: var(--color-text); transition: all 0.15s; box-shadow: var(--shadow-card); }
+    .case-card:hover { transform: translateY(-3px); border-color: var(--color-accent); box-shadow: var(--shadow-card-hover); }
+    .case-card__thumb { width: 100%; aspect-ratio: 1200 / 630; background: #0a0610; overflow: hidden; border-bottom: 1px solid var(--color-border-soft); }
+    .case-card__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .case-card__body { padding: 16px 22px 0; }
+    .case-card__cat { display: inline-block; padding: 3px 10px; background: #fcebe5; color: var(--color-accent); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; border-radius: 2px; margin-bottom: 10px; }
+    .case-card__title { font-size: 1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.6; font-family: var(--font-serif); color: var(--color-text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .case-card__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .case-card__loss { font-family: "Helvetica Neue", sans-serif; font-size: 1.15rem; font-weight: 900; color: var(--color-loss); }
+    .case-card__who { font-size: 0.74rem; color: var(--color-text-muted); }
+
+    @media (max-width: 720px) {
+      .all-grid { grid-template-columns: 1fr; }
+      .container { padding: 32px 16px 64px; }
+    }
+  </style>
+</BaseLayout>

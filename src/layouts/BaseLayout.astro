@@ -1,0 +1,217 @@
+---
+import SEO from "../components/SEO.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  pageType?: "website" | "article";
+  articleMeta?: {
+    headline?: string;
+    datePublished?: string;
+    dateModified?: string;
+    author?: string;
+    category?: string;
+  };
+  breadcrumbs?: { name: string; url: string }[];
+}
+
+const { title, description, image, pageType, articleMeta, breadcrumbs } = Astro.props;
+---
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="generator" content={Astro.generator} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet" /></noscript>
+  <SEO title={title} description={description} image={image} pageType={pageType} articleMeta={articleMeta} breadcrumbs={breadcrumbs} />
+
+  {/* GA4 + AdSense は LCP後に遅延ロード（Performance最大化）— GA4 IDはとよくん取得後差し替え */}
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-F39GPH1BQ5', { send_page_view: true });
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const ga = document.createElement('script');
+        ga.async = true;
+        ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-F39GPH1BQ5';
+        document.head.appendChild(ga);
+        const ads = document.createElement('script');
+        ads.async = true;
+        ads.crossOrigin = 'anonymous';
+        ads.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6137725398672331';
+        document.head.appendChild(ads);
+
+        // === カスタムイベント追跡 ===
+        // 1) スクロール深度（25/50/75%）
+        const sent = new Set();
+        let ticking = false;
+        const checkDepth = () => {
+          const h = document.documentElement;
+          const pct = ((h.scrollTop + window.innerHeight) / h.scrollHeight) * 100;
+          [25, 50, 75].forEach(d => {
+            if (pct >= d && !sent.has(d)) {
+              sent.add(d);
+              gtag('event', 'scroll_depth', { value: d, page_path: location.pathname });
+            }
+          });
+          ticking = false;
+        };
+        document.addEventListener('scroll', () => {
+          if (!ticking) { requestAnimationFrame(checkDepth); ticking = true; }
+        }, { passive: true });
+
+        // 2) クリック委任：アフィリ / シェア / 外部リンク
+        document.addEventListener('click', (e) => {
+          const t = e.target.closest('a');
+          if (!t) return;
+          if (t.hasAttribute('data-aff')) {
+            gtag('event', 'affiliate_click', {
+              link_url: t.href || '',
+              link_text: (t.textContent || '').trim().slice(0, 50),
+              aff_slot: t.getAttribute('data-aff') || '',
+            });
+          } else if (t.hasAttribute('data-share')) {
+            gtag('event', 'share_click', { method: t.getAttribute('data-share') });
+          } else if (t.href && t.host && t.host !== location.host && /^https?:/.test(t.href)) {
+            gtag('event', 'outbound_click', { link_url: t.href, link_text: (t.textContent || '').trim().slice(0, 50) });
+          }
+        }, true);
+
+        // 3) 投稿フォーム閲覧・送信
+        const form = document.querySelector('form[data-track="submit"]');
+        if (form) {
+          const io = new IntersectionObserver(es => {
+            es.forEach(en => { if (en.isIntersecting) { gtag('event', 'submit_form_view'); io.disconnect(); } });
+          }, { threshold: 0.5 });
+          io.observe(form);
+          form.addEventListener('submit', () => gtag('event', 'submit_form_submit'));
+        }
+      }, 1500);
+    });
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="/" class="site-logo" aria-label="副業詐欺録 トップへ">
+        <img src="/site-logo.svg" alt="副業詐欺録" width="200" height="46" />
+      </a>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="/#section-latest">手口</a></li>
+          <li><a href="/#section-cats">分類</a></li>
+          <li><a href="/#section-checklist">警戒チェック</a></li>
+          <li><a href="/#section-help">相談先</a></li>
+          <li><a href="/search/" aria-label="検索">🔍</a></li>
+          <li><a href="/about/">運営</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__sister">
+        <h4 class="site-footer__sister-title">姉妹サイト（同じ運営「白川」によるアーカイブ）</h4>
+        <ul>
+          <li><a href="https://kaidanroku.com/" target="_blank" rel="noopener">怪談録 — 実話・実体験ベースの怪談まとめ</a></li>
+          <li><a href="https://toushishippairoku.com/" target="_blank" rel="noopener">投資失敗録 — 他人の失敗から、明日の判断を</a></li>
+        </ul>
+      </div>
+      <nav class="site-footer__nav">
+        <a href="/about/">運営者情報</a>
+        <span>・</span>
+        <a href="/contact/">お問い合わせ</a>
+        <span>・</span>
+        <a href="/privacy/">プライバシーポリシー</a>
+        <span>・</span>
+        <a href="/disclaimer/">免責事項</a>
+      </nav>
+      <p class="site-footer__copy">&copy; 2026 副業詐欺録 / 運営: 白川</p>
+      <p class="site-footer__note">本サイトは情報商材・MLM・副業詐欺等の実例を、読者投稿の取材記録としてアーカイブしています。特定の業者・個人を名指しで攻撃する目的ではありません。被害申告は<a href="https://www.kokusen.go.jp/" target="_blank" rel="noopener">消費生活センター（188）</a>・警察相談（#9110）へ。</p>
+    </div>
+  </footer>
+
+  <style is:global>
+    .site-footer__sister { background:#fff7e8; border:1px solid #e8d8a8; padding:18px 22px; border-radius:8px; margin-bottom:24px; }
+    .site-footer__sister-title { margin:0 0 12px; font-size:0.92rem; color:#8a6010; font-weight:600; }
+    .site-footer__sister ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+    .site-footer__sister a { color:#b8312a; text-decoration:none; font-size:0.92rem; }
+    .site-footer__sister a:hover { text-decoration:underline; }
+    .site-footer__nav { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px; font-size:0.9rem; }
+    .site-footer__nav a { color:#5a6070; text-decoration:none; }
+    .site-footer__nav a:hover { color:#b8312a; text-decoration:underline; }
+    .site-footer__nav span { color:#c0c5cf; font-size:0.85rem; }
+  </style>
+
+  {/* Cookie 同意バナー */}
+  <div id="cookie-banner" class="cookie-banner" hidden>
+    <div class="cookie-banner__inner">
+      <p>このサイトでは、アクセス解析と広告のため Cookie を使用しています。詳しくは <a href="/privacy/">プライバシーポリシー</a> をご覧ください。</p>
+      <div class="cookie-banner__btns">
+        <button class="cookie-banner__btn cookie-banner__btn--accept" data-consent="accept">同意する</button>
+        <button class="cookie-banner__btn cookie-banner__btn--decline" data-consent="decline">利用しない</button>
+      </div>
+    </div>
+  </div>
+  <script is:inline>
+    (function() {
+      var KEY = 'cookie-consent';
+      var stored = localStorage.getItem(KEY);
+      var banner = document.getElementById('cookie-banner');
+      function apply(choice) {
+        if (window.gtag) {
+          window.gtag('consent', 'update', {
+            ad_storage: choice === 'accept' ? 'granted' : 'denied',
+            analytics_storage: choice === 'accept' ? 'granted' : 'denied',
+          });
+        }
+      }
+      if (!stored && banner) {
+        banner.hidden = false;
+        banner.addEventListener('click', function(e) {
+          var btn = e.target.closest('[data-consent]');
+          if (!btn) return;
+          var choice = btn.getAttribute('data-consent');
+          localStorage.setItem(KEY, choice);
+          banner.hidden = true;
+          apply(choice);
+        });
+      } else if (stored) {
+        apply(stored);
+      }
+    })();
+  </script>
+  <style is:global>
+    .cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #fff; padding: 16px 20px; z-index: 9999; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); }
+    .cookie-banner__inner { max-width: 960px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between; }
+    .cookie-banner p { margin: 0; font-size: 0.88rem; line-height: 1.6; flex: 1 1 280px; color: #fff; }
+    .cookie-banner a { color: #c8201c; text-decoration: underline; }
+    .cookie-banner__btns { display: flex; gap: 10px; flex-shrink: 0; }
+    .cookie-banner__btn { padding: 8px 18px; font-size: 0.85rem; cursor: pointer; border: 1px solid; background: transparent; color: #fff; font-family: inherit; }
+    .cookie-banner__btn--accept { background: #c8201c; border-color: #c8201c; color: #fff; font-weight: 600; }
+    .cookie-banner__btn--decline { border-color: #888; color: #ccc; }
+    @media (max-width: 640px) {
+      .cookie-banner__inner { flex-direction: column; align-items: stretch; }
+      .cookie-banner__btns { justify-content: center; }
+    }
+  </style>
+</body>
+</html>

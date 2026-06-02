@@ -1,0 +1,178 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const CAT_LABEL: Record<string, string> = {
+  joho: "情報商材", mlm: "MLM", coach: "コンサル詐欺",
+  ai: "AI副業", invest: "投資型副業", romance: "ロマンス商法",
+  busshu: "物販系", overseas: "海外案件", jirei: "過去事案",
+};
+const CAT_DESC: Record<string, string> = {
+  joho: "「絶対勝てる」「コピペで月100万」型の高額教材・段階的課金。LINEオプチャ起点が増加中。被害者本人から聞いた勧誘の流れ、払った金額、気づいた瞬間、返金交渉の顛末を編集者が記録してアーカイブ。",
+  mlm: "健康食品・化粧品・暗号資産の連鎖紹介ビジネス。在庫買取と人間関係崩壊が典型。MLM被害者本人から聞いた勧誘の流れ、抜けられなかった理由、抜けた後の生活までを編集して残す記録集。",
+  coach: "高額コーチング・コンサル・スクール商法。成果指標なし／突然連絡途絶のパターン。本人取材ベースで契約までの心理操作、教材の中身、返金交渉、弁護士相談までを編集してアーカイブ。",
+  ai: "「AIで自動収益」を謳う最新型副業詐欺。提供物は汎用AIのラッパーが多い。ChatGPT副業・AI画像生成スクール・AI物販ツールの被害実話を本人取材で編集してアーカイブする最新事例集。",
+  invest: "「副業として安全な投資」装い型。金商法を回避する言い換えに注意。海外バイナリー・自動売買ツール・コピートレードで損失を出した被害者本人の実話を編集者がアーカイブして記録。",
+  romance: "マッチング・SNS経由の心理操作型投資勧誘。暗号資産送金で証拠が残りにくい。出会い系で出会った相手に投資を勧められた被害体験を、編集者が本人取材で記録してアーカイブ。",
+  busshu: "Amazon物販・転売スクール・在庫買取型。仕入れリスト陳腐化と関税問題。物販スクールに高額入金して在庫を抱えた被害者の実話を、本人取材で編集して記録するアーカイブ。",
+  overseas: "海外送金型・ペーパーファンド・越境EC。回収不能の事例が大半。海外口座・暗号資産送金で被害に遭った人の体験を、編集者が本人取材で記録してアーカイブする実例集。",
+  jirei: "ジャパンライフ・安愚楽牧場・L&G・テキシアジャパンなど、過去に判決済または社会的に公表済の有名事案アーカイブ。被害者本人の体験と当時の社会的経緯を、編集者が記録した事案集。",
+};
+
+type Entry = {
+  slug: string;
+  title: string;
+  category: string;
+  catKey: string;
+  scheme: string;
+  loss: number;
+  age?: number | string;
+  gender?: string;
+  prefecture?: string;
+};
+
+export async function getStaticPaths() {
+  const CAT_KEYS = ["joho", "mlm", "coach", "ai", "invest", "romance", "busshu", "overseas", "jirei"];
+  return CAT_KEYS.map((cat) => ({ params: { cat } }));
+}
+
+const { cat } = Astro.params;
+const entries: Entry[] = [];
+const CAT_KEYS = ["joho", "mlm", "coach", "ai", "invest", "romance", "busshu", "overseas", "jirei"];
+try {
+  const dir = path.join(process.cwd(), "approved");
+  for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(dir, f), "utf-8"));
+      // jireiカテゴリは「過去事案軸」。slug prefix `fukugyo-jirei-` で別途判定
+      const isJireiSlug = typeof j.slug === "string" && j.slug.startsWith("fukugyo-jirei-");
+      const matchesCat = cat === "jirei" ? isJireiSlug : (j.category === cat && !isJireiSlug);
+      if (matchesCat && typeof j.loss_amount_yen === "number") {
+        entries.push({
+          slug: j.slug,
+          title: j.title,
+          catKey: j.category,
+          category: CAT_LABEL[j.category] ?? j.category ?? "",
+          scheme: j.scheme ?? "",
+          loss: j.loss_amount_yen,
+          age: j.persona?.age ?? "",
+          gender: j.persona?.gender ?? "",
+          prefecture: j.persona?.prefecture ?? "",
+        });
+      }
+    } catch {}
+  }
+} catch {}
+
+entries.sort((a, b) => b.loss - a.loss);
+
+const formatLoss = (yen: number) => `¥${yen.toLocaleString()}-`;
+const totalLoss = entries.reduce((s, e) => s + e.loss, 0);
+const totalLossLabel = formatLoss(totalLoss);
+const avgLoss = entries.length > 0 ? formatLoss(Math.round(totalLoss / entries.length)) : "—";
+
+const catLabel = CAT_LABEL[cat as string] ?? cat;
+const catDesc = CAT_DESC[cat as string] ?? "";
+
+// 他カテゴリリスト
+const otherCats = CAT_KEYS.filter((c) => c !== cat);
+---
+<BaseLayout title={`${catLabel}の手口 - 副業詐欺録`} description={`${catLabel}に分類される副業詐欺の取材記録 ${entries.length} 件。被害額累計${totalLossLabel}。${catDesc}`}>
+  <section class="cat-hero">
+    <div class="cat-hero__inner">
+      <nav class="cat-hero__crumb"><a href="/">副業詐欺録</a> <span>/</span> <a href="/articles/">手口一覧</a> <span>/</span> <span>{catLabel}</span></nav>
+      <span class="cat-hero__sub">CATEGORY</span>
+      <h1 class="cat-hero__title">{catLabel} の手口</h1>
+      <p class="cat-hero__lead">{catDesc}</p>
+      <div class="cat-hero__stats">
+        <div class="cat-hero__stat"><span class="cat-hero__stat__label">CASES</span><span class="cat-hero__stat__num">{entries.length}<span>件</span></span></div>
+        <div class="cat-hero__stat cat-hero__stat--main"><span class="cat-hero__stat__label">TOTAL LOSS</span><span class="cat-hero__stat__num">{totalLossLabel}</span></div>
+        <div class="cat-hero__stat"><span class="cat-hero__stat__label">AVG</span><span class="cat-hero__stat__num">{avgLoss}</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    {entries.length === 0 ? (
+      <p class="empty-state">このカテゴリの記録は順次掲載予定です。</p>
+    ) : (
+      <div class="cat-grid">
+        {entries.map((e) => (
+          <a href={`/articles/${e.slug}/`} class="case-card">
+            <div class="case-card__thumb">
+              <img src={`/ogp/${e.slug}.png`} alt={e.title} loading="lazy" width="600" height="315" />
+            </div>
+            <div class="case-card__body">
+              <span class="case-card__cat">{e.category}</span>
+              <h3 class="case-card__title">{e.title}</h3>
+              <div class="case-card__meta">
+                <span class="case-card__loss">{formatLoss(e.loss)}</span>
+                <span class="case-card__who">{e.age}歳{e.gender} / {e.prefecture}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <section class="other-cats">
+      <h2 class="other-cats__title">他のカテゴリも見る</h2>
+      <div class="other-cats__grid">
+        {otherCats.map((c) => (
+          <a href={`/category/${c}/`} class="other-cats__item">{CAT_LABEL[c]} →</a>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .cat-hero { background: #ffffff; padding: 56px 24px; color: var(--color-text); border-bottom: 1px solid var(--color-border); position: relative; }
+    .cat-hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--color-accent); }
+    .cat-hero__inner { max-width: 1080px; margin: 0 auto; }
+    .cat-hero__crumb { font-size: 0.76rem; color: var(--color-text-muted); margin-bottom: 16px; letter-spacing: 0.04em; }
+    .cat-hero__crumb a { color: var(--color-text-soft); text-decoration: none; }
+    .cat-hero__crumb a:hover { color: var(--color-accent); }
+    .cat-hero__crumb span { margin: 0 6px; }
+    .cat-hero__sub { display: block; font-size: 0.7rem; letter-spacing: 0.5em; color: var(--color-accent); font-weight: 700; margin-bottom: 12px; }
+    .cat-hero__title { font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 900; margin: 0 0 16px; letter-spacing: 0.08em; font-family: var(--font-serif); color: var(--color-text); }
+    .cat-hero__lead { color: var(--color-text-soft); margin: 0 0 24px; max-width: 720px; line-height: 1.85; }
+    .cat-hero__stats { display: flex; gap: 16px; padding: 18px 24px; background: #f6f6f5; border: 1px solid var(--color-border); border-radius: 0; max-width: 600px; }
+    .cat-hero__stat { flex: 1; text-align: center; border-right: 1px solid var(--color-border); padding: 0 8px; }
+    .cat-hero__stat:last-child { border-right: none; }
+    .cat-hero__stat__label { display: block; font-size: 0.62rem; color: var(--color-text-muted); letter-spacing: 0.28em; margin-bottom: 6px; font-weight: 700; }
+    .cat-hero__stat__num { font-size: 1.2rem; font-weight: 900; color: var(--color-text); font-family: "Helvetica Neue", sans-serif; }
+    .cat-hero__stat__num span { font-size: 0.66rem; margin-left: 2px; }
+    .cat-hero__stat--main .cat-hero__stat__num { font-size: 1.5rem; color: var(--color-accent); }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 48px 24px 96px; }
+    .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-bottom: 64px; }
+
+    .case-card { display: block; padding: 0 0 18px; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; text-decoration: none; color: var(--color-text); transition: all 0.15s; box-shadow: var(--shadow-card); }
+    .case-card:hover { transform: translateY(-3px); border-color: var(--color-accent); box-shadow: var(--shadow-card-hover); }
+    .case-card__thumb { width: 100%; aspect-ratio: 1200 / 630; background: #0a0610; overflow: hidden; }
+    .case-card__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .case-card__body { padding: 16px 22px 0; }
+    .case-card__cat { display: inline-block; padding: 3px 10px; background: #fcebe5; color: var(--color-accent); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; border-radius: 2px; margin-bottom: 10px; }
+    .case-card__title { font-size: 1rem; font-weight: 700; margin: 0 0 12px; line-height: 1.6; font-family: var(--font-serif); color: var(--color-text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .case-card__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .case-card__loss { font-family: "Helvetica Neue", sans-serif; font-size: 1.15rem; font-weight: 900; color: var(--color-loss); }
+    .case-card__who { font-size: 0.74rem; color: var(--color-text-muted); }
+
+    .empty-state { padding: 60px 20px; text-align: center; color: var(--color-text-muted); border: 1px dashed var(--color-border); border-radius: 6px; }
+
+    .other-cats { padding: 32px 0 0; border-top: 1px solid var(--color-border); }
+    .other-cats__title { font-size: 1.1rem; font-weight: 800; color: var(--color-text); margin: 0 0 18px; font-family: var(--font-serif); }
+    .other-cats__grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .other-cats__item { display: inline-block; padding: 10px 18px; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 20px; font-size: 0.86rem; color: var(--color-text-soft); text-decoration: none; font-weight: 600; transition: all 0.15s; }
+    .other-cats__item:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    @media (max-width: 720px) {
+      .cat-grid { grid-template-columns: 1fr; }
+      .cat-hero__stats { flex-direction: column; gap: 12px; }
+      .cat-hero__stat { border-right: none; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; }
+      .cat-hero__stat:last-child { border-bottom: none; }
+      .container { padding: 32px 16px 64px; }
+    }
+  </style>
+</BaseLayout>

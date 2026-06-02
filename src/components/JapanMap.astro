@@ -1,0 +1,179 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import { prefectureStats, topPrefectures } from "../data/prefectures";
+
+const pathsFile = path.join(process.cwd(), "src/data/japan-paths.svg");
+const japanPaths = fs.readFileSync(pathsFile, "utf-8");
+---
+<section class="vmap-section" id="section-map">
+  <div class="vmap-section__head">
+    <span class="vmap-section__sub">GEOGRAPHY</span>
+    <h2 class="vmap-section__title">全国の投稿分布</h2>
+    <p class="vmap-section__lead">届いた話を、地図に貼っていく。色の濃さは件数。<br/>カーソルを乗せると、その県の件数と合計損失額が出ます。</p>
+  </div>
+  <div class="vmap-section__inner">
+    <div class="vmap-frame">
+      <div class="vmap-frame__label">JAPAN ・ LOSS DISTRIBUTION</div>
+      <div class="vmap-svg-wrap">
+        <svg id="vmap-japan" viewBox="0 0 700 640" xmlns="http://www.w3.org/2000/svg" aria-label="日本地図 投稿分布">
+          <defs>
+            <!-- 海の背景パターン（薄いストライプ＝海感） -->
+            <pattern id="sea-pattern" patternUnits="userSpaceOnUse" width="14" height="14">
+              <rect width="14" height="14" fill="#eef3f7"/>
+              <path d="M-1 7 L7 -1 M-1 14 L14 -1 M14 14 L7 14" stroke="#dde6ed" stroke-width="0.4"/>
+            </pattern>
+            <!-- 県のドロップシャドウ -->
+            <filter id="map-shadow" x="-5%" y="-5%" width="110%" height="110%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+              <feOffset dx="0" dy="2"/>
+              <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+              <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- バッジのドロップシャドウ -->
+            <filter id="badge-shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+              <feOffset dx="0" dy="2"/>
+              <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+              <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- 海の背景 -->
+          <rect width="700" height="640" fill="url(#sea-pattern)"/>
+
+          <!-- 沖縄インセット枠（天気予報スタイル・右下角・本州とぶつからない位置） -->
+          <g class="okinawa-inset">
+            <rect x="510" y="510" width="170" height="115"
+                  fill="#fdfcf7" stroke="#1a3a6e" stroke-width="1.4"
+                  stroke-dasharray="4 3" rx="3"/>
+            <text x="522" y="528" font-family="Noto Sans JP, sans-serif"
+                  font-size="11" font-weight="700" fill="#1a3a6e"
+                  letter-spacing="0.18em">OKINAWA</text>
+            <text x="522" y="542" font-family="Noto Sans JP, sans-serif"
+                  font-size="9" fill="#4a5568"
+                  letter-spacing="0.14em">沖縄県</text>
+          </g>
+
+          <!-- 都道府県パス（本州・北海道・四国・九州・沖縄本島）
+               沖縄パス（data-id="47"）は script で transform 属性付与・左下インセット内へ移動 -->
+          <g id="vmap-base" filter="url(#map-shadow)" set:html={japanPaths} />
+
+          <!-- 掲載済みドット（数字無し・クリック誘導用） -->
+          <g id="vmap-badges">
+            {prefectureStats.map((p) => (
+              <g class="badge" data-pref-id={p.id} data-slug={p.slug} filter="url(#badge-shadow)">
+                <circle cx={p.badgeCx} cy={p.badgeCy} r="9" class="badge__ring"/>
+                <circle cx={p.badgeCx} cy={p.badgeCy} r="5" class="badge__circle"/>
+              </g>
+            ))}
+          </g>
+        </svg>
+        <div class="vmap-tooltip" id="vmap-tooltip"></div>
+      </div>
+      <div class="vmap-legend">
+        <span><i style="background:#f5f1e8"></i>未掲載</span>
+        <span><i style="background:#f0bc7c"></i>1〜4件</span>
+        <span><i style="background:#d97a3c"></i>5〜14件</span>
+        <span><i style="background:#8a3018"></i>15件以上</span>
+        <span><i style="background:#c41e1e"></i>30件超</span>
+        <span style="margin-left:auto;color:var(--c-navy);font-weight:700">掲載済みの県は <strong style="background:var(--c-navy);color:#fff;padding:2px 6px;border-radius:50%;font-size:0.72rem">●</strong> をクリック →</span>
+      </div>
+    </div>
+
+    <aside class="vmap-side">
+      <h3>TOP PREFECTURES — 損失額の多い県</h3>
+      <div class="vmap-rank">
+        {topPrefectures.map((p) => (
+          <a class="vmap-rank__row" href={`/prefecture/${p.slug}/`}>
+            <span class="vmap-rank__num">{p.rank}</span>
+            <span class="vmap-rank__name">{p.name}<small>{p.cases}件 ・ {p.breakdown}</small></span>
+            <span class="vmap-rank__amt">{p.total}<small>合計</small></span>
+          </a>
+        ))}
+      </div>
+      <p class="vmap-summary">
+        全国 <strong>8</strong> 都道府県から掲載／残り <strong>39</strong> 都道府県は現在募集中。<br/>
+        地元の話、聞かせてください。
+      </p>
+    </aside>
+  </div>
+</section>
+
+<script is:inline define:vars={{ prefectureData: Object.fromEntries(prefectureStats.map(p => [p.id, p])) }}>
+  function colorClassByCount(c) {
+    if (c >= 30) return 'pref-c5';
+    if (c >= 15) return 'pref-c3';
+    if (c >=  5) return 'pref-c2';
+    if (c >=  1) return 'pref-c1';
+    return 'pref-c0';
+  }
+
+  // 沖縄パスを右下インセット内に SVG transform で移動
+  // 元座標中心 ≈ (590, 85) → 目標中心 ≈ (595, 575) = インセット枠 (510,510,170,115) の中心
+  const okinawa = document.querySelector('#vmap-base path[data-id="47"]');
+  if (okinawa) {
+    okinawa.setAttribute('transform', 'translate(5, 490)');
+  }
+
+  // 各掲載済み県のバッジ位置を、実際の path の中心（バウンディングボックス）に再配置
+  // 手動座標はズレが発生するため、自動補正
+  document.querySelectorAll('#vmap-badges .badge').forEach(badge => {
+    const prefId = badge.dataset.prefId;
+    if (!prefId) return;
+    const path = document.querySelector(`#vmap-base path[data-id="${prefId}"]`);
+    if (!path) return;
+    try {
+      const bbox = path.getBBox();
+      const cx = bbox.x + bbox.width / 2;
+      const cy = bbox.y + bbox.height / 2;
+      badge.querySelectorAll('circle').forEach(c => {
+        c.setAttribute('cx', cx);
+        c.setAttribute('cy', cy);
+      });
+    } catch (e) { /* getBBox 失敗時はそのまま */ }
+  });
+
+  const tooltip = document.getElementById('vmap-tooltip');
+  const wrap = document.querySelector('.vmap-svg-wrap');
+
+  document.querySelectorAll('#vmap-base path').forEach(path => {
+    const pid = +path.dataset.id;
+    const data = prefectureData[pid];
+    const cases = data?.cases ?? 0;
+    const amount = data?.amount ?? '—';
+    const name = path.dataset.name;
+
+    path.classList.add(colorClassByCount(cases));
+    if (data?.slug) {
+      path.classList.add('pref--clickable');
+    }
+
+    path.addEventListener('mouseenter', () => {
+      tooltip.innerHTML = `<strong>${name}</strong>${cases}件 / <span class="vmap-tooltip__amt">${amount}</span>${data?.slug ? '<small style="display:block;color:#d8a55a;margin-top:4px;font-size:0.68rem">クリックで一覧へ →</small>' : ''}`;
+      tooltip.classList.add('show');
+    });
+    path.addEventListener('mousemove', e => {
+      const r = wrap.getBoundingClientRect();
+      tooltip.style.left = (e.clientX - r.left + 14) + 'px';
+      tooltip.style.top  = (e.clientY - r.top - 36) + 'px';
+    });
+    path.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+
+    // 掲載済みの県はクリックで都道府県別ページへ遷移
+    if (data?.slug) {
+      path.addEventListener('click', () => {
+        window.location.href = `/prefecture/${data.slug}/`;
+      });
+    }
+  });
+
+  // バッジもクリック可能に
+  document.querySelectorAll('#vmap-badges .badge').forEach(badge => {
+    const slug = badge.dataset.slug;
+    if (!slug) return;
+    badge.addEventListener('click', () => {
+      window.location.href = `/prefecture/${slug}/`;
+    });
+  });
+</script>
