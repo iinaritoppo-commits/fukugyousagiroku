@@ -213,7 +213,7 @@ const editorNotes = [
       </div>
       <div class="hero__stat">
         <span class="hero__stat__label">CATEGORIES</span>
-        <span class="hero__stat__num hero__stat__num--text">9<span class="hero__stat__suffix">分類</span></span>
+        <span class="hero__stat__num hero__stat__num--text">{new Set(entries.map(e => e.catKey)).size}<span class="hero__stat__suffix">分類</span></span>
         <span class="hero__stat__sub">情商・MLM・AI副業ほか</span>
       </div>
     </div>
