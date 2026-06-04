@@ -49,7 +49,14 @@ def _get_env(key):
                     return line.strip().split("=", 1)[1]
     return ""
 
-env = {"MICROCMS_SERVICE_DOMAIN": _get_env("MICROCMS_SERVICE_DOMAIN"), "MICROCMS_API_KEY": _get_env("MICROCMS_API_KEY")}
+env = {
+    "MICROCMS_SERVICE_DOMAIN": _get_env("MICROCMS_SERVICE_DOMAIN"),
+    "MICROCMS_API_KEY": _get_env("MICROCMS_API_KEY"),
+    "X_API_KEY": _get_env("X_API_KEY"),
+    "X_API_SECRET": _get_env("X_API_SECRET"),
+    "X_ACCESS_TOKEN": _get_env("X_ACCESS_TOKEN"),
+    "X_ACCESS_TOKEN_SECRET": _get_env("X_ACCESS_TOKEN_SECRET"),
+}
 
 DOW_GENRE = {
     0: "joho",     # 月：情報商材
@@ -213,9 +220,9 @@ def main():
                 break
 
     if not item:
-        log("ALL X-POSTED. Out of stock.")
+        log("ALL X-POSTED. Out of stock. (正常終了：X投稿は任意なのでビルド&デプロイは継続)")
         notify_macos("副業詐欺録：X在庫切れ", "approved 全てX投稿済み")
-        return 1
+        return 0
 
     log(f"Target: {item['slug']}  ({src.name})")
 
