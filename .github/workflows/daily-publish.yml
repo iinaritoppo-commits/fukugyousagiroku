@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
-        env:
+    env:
       TZ: Asia/Tokyo
       X_API_KEY: ${{ secrets.X_API_KEY }}
       X_API_SECRET: ${{ secrets.X_API_SECRET }}
