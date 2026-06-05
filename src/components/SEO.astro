@@ -28,7 +28,7 @@ const {
 const siteName = "副業詐欺録";
 const siteUrl = "https://fukugyousagiroku.com";
 const authorName = "白川";
-const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 const url = canonicalUrl ?? Astro.url.href;
 const fullImage = image.startsWith("http") ? image : `${siteUrl}${image}`;
 
