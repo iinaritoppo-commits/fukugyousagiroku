@@ -47,6 +47,7 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -107,11 +108,11 @@ p {
 .site-header {
   border-bottom: 2px solid #c8201c;
   padding: 14px 0;
-  background: linear-gradient(180deg, #fff8de 0%, #fff4c8 100%);
+  background: #141414;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 8px rgba(240, 180, 32, 0.18);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 .site-header__inner {
@@ -128,7 +129,7 @@ p {
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: var(--color-text);
+  color: var(--color-text-light);
 }
 
 .site-logo:hover {
@@ -142,7 +143,7 @@ p {
 }
 
 .site-nav a {
-  color: var(--color-text-soft);
+  color: rgba(245, 243, 240, 0.82);
   font-size: 0.86rem;
   font-weight: 600;
   letter-spacing: 0.04em;

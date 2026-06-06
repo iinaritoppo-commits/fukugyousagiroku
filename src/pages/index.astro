@@ -633,19 +633,19 @@ const editorNotes = [
 
   /* === HERO === 暖色系（kissfx風：黄×白×赤アクセント・親しみやすい） */
   .hero {
-    background: linear-gradient(180deg, #fff8de 0%, #fffcf0 60%, #ffffff 100%);
+    background: linear-gradient(180deg, #1c1816 0%, #141414 100%);
     padding: 80px 24px 64px;
     position: relative;
     overflow: hidden;
-    color: #1a1a1a;
-    border-bottom: 1px solid #f0d878;
+    color: #f5f3f0;
+    border-bottom: 2px solid #c8201c;
   }
   .hero::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, #f5c842 0%, #f0b020 50%, #e08810 100%);
+    height: 6px;
+    background: linear-gradient(90deg, #c8201c 0%, #a01816 100%);
   }
   .hero::after {
     content: "";
@@ -656,10 +656,10 @@ const editorNotes = [
   }
   .hero__inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; text-align: center; }
   .hero__sub-en { display: inline-block; font-size: 0.7rem; letter-spacing: 0.55em; color: #c8201c; font-weight: 700; margin-bottom: 22px; }
-  .hero__title { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; letter-spacing: 0.12em; margin: 0 0 22px; line-height: 1.42; color: #1a1a1a; font-family: var(--font-serif); }
-  .hero__title__accent { color: #c8201c; }
-  .hero__lead { color: #4a4a4a; line-height: 2.05; font-size: 1rem; margin: 0 auto 14px; max-width: 620px; }
-  .hero__editor-note { font-family: var(--font-serif); color: #8a8a8a; font-size: 0.92rem; letter-spacing: 0.16em; margin: 18px 0 32px; }
+  .hero__title { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; letter-spacing: 0.12em; margin: 0 0 22px; line-height: 1.42; color: #f5f3f0; font-family: var(--font-serif); }
+  .hero__title__accent { color: #e04340; }
+  .hero__lead { color: rgba(245,243,240,0.82); line-height: 2.05; font-size: 1rem; margin: 0 auto 14px; max-width: 620px; }
+  .hero__editor-note { font-family: var(--font-serif); color: rgba(245,243,240,0.55); font-size: 0.92rem; letter-spacing: 0.16em; margin: 18px 0 32px; }
   .hero-cta { display: flex; justify-content: center; gap: 14px; margin: 18px 0 32px; flex-wrap: wrap; }
   .hero-cta a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 0; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.06em; text-decoration: none; transition: all 0.18s; }
   .hero-cta__primary { background: #1a1a1a; color: #ffffff; border: 1px solid #1a1a1a; }
@@ -667,8 +667,8 @@ const editorNotes = [
   /* ピラー記事への大型CTA */
   .hero-cta__primary--pillar { background: linear-gradient(135deg, #c8201c 0%, #a01816 100%); color: #ffffff; border: none; padding: 16px 34px; font-size: 1.02rem; box-shadow: 0 6px 18px rgba(200,32,28,0.28); letter-spacing: 0.08em; }
   .hero-cta__primary--pillar:hover { background: linear-gradient(135deg, #a01816 0%, #7a1311 100%); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(200,32,28,0.4); }
-  .hero-cta__secondary { background: #ffffff; color: #1a1a1a; border: 1px solid #1a1a1a; }
-  .hero-cta__secondary:hover { background: #1a1a1a; color: #ffffff; }
+  .hero-cta__secondary { background: transparent; color: #f5f3f0; border: 1px solid rgba(245,243,240,0.4); }
+  .hero-cta__secondary:hover { background: #f5f3f0; color: #141414; }
   .hero__stats {
     display: grid; grid-template-columns: 1fr 2fr 1fr;
     align-items: end; margin: 18px auto 0;
