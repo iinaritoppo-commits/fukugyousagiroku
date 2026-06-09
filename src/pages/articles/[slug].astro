@@ -161,7 +161,7 @@ const catLabel = article.category ? (CAT_LABEL[article.category] ?? article.cate
         <div class="article__related-grid">
           {related.map((r) => (
             <a href={`/articles/${r.slug}/`} class="related-card">
-              <img src={`/ogp/${r.slug}.webp`} alt={r.title} loading="lazy" />
+              <img src={`/ogp/${r.slug}.webp`} alt={r.title} loading="lazy" width="1200" height="630" />
               <div class="related-card__body">
                 <h3 class="related-card__title">{r.title}</h3>
                 <div class="related-card__meta">
@@ -251,12 +251,13 @@ const catLabel = article.category ? (CAT_LABEL[article.category] ?? article.cate
   .article__body aside.admin-note h2 { color: #8a4218; }
   .article__body aside.refund-meter { background: #fcebe5; border-color: #f5c8c0; }
   .article__body aside.refund-meter h2 { color: var(--color-loss); }
+  .article__body aside.refund-meter p[style] { color: #56606e !important; }
   .article__warning { margin-top: 56px; padding: 28px 32px; background: var(--color-bg-dark); color: var(--color-text-light); border: 1px solid var(--color-accent-2); border-radius: 6px; }
   .article__warning h2 { font-size: 1.2rem; font-weight: 900; color: var(--color-accent-warn); margin: 0 0 18px; font-family: var(--font-serif); letter-spacing: 0.04em; }
   .article__warning ul { list-style: none; padding: 0; margin: 0; }
   .article__warning li { padding: 10px 0; font-size: 0.9rem; line-height: 1.85; color: rgba(247, 241, 227, 0.86); border-bottom: 1px dashed rgba(200, 154, 74, 0.2); }
   .article__warning li:last-child { border-bottom: none; }
-  .article__warning strong { color: var(--color-accent-warn); }
+  .article__warning strong { color: #ef6a60; }
 
   .article__related { margin-top: 56px; padding-top: 36px; border-top: 1px solid var(--color-border); }
   .article__related-h { font-size: 1.15rem; font-weight: 800; color: var(--color-text); margin: 0 0 22px; font-family: var(--font-serif); letter-spacing: 0.04em; }
