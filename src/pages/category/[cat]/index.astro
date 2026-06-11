@@ -33,13 +33,13 @@ type Entry = {
 };
 
 export async function getStaticPaths() {
-  const CAT_KEYS = ["joho", "mlm", "coach", "ai", "invest", "romance", "busshu", "overseas", "jirei"];
+  const CAT_KEYS = ["joho", "mlm", "coach", "ai", "romance", "busshu", "overseas"];
   return CAT_KEYS.map((cat) => ({ params: { cat } }));
 }
 
 const { cat } = Astro.params;
 const entries: Entry[] = [];
-const CAT_KEYS = ["joho", "mlm", "coach", "ai", "invest", "romance", "busshu", "overseas", "jirei"];
+const CAT_KEYS = ["joho", "mlm", "coach", "ai", "romance", "busshu", "overseas"];
 try {
   const dir = path.join(process.cwd(), "approved");
   for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".json"))) {
