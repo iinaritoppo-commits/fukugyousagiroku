@@ -63,6 +63,7 @@ const blogPosting = pageType === "article" && articleMeta ? {
   "dateModified": articleMeta.dateModified ?? articleMeta.datePublished ?? "2026-05-01",
   "author": {
     "@type": "Person",
+    "@id": "https://fukugyousagiroku.com/about/#shira",
     "name": articleMeta.author ?? authorName,
     "url": `${siteUrl}/about/`,
   },
