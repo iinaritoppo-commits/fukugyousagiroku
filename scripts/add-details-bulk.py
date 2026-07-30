@@ -216,6 +216,14 @@ def process(jf):
 
 
 def main():
+    raise SystemExit(
+        "【実行停止】このスクリプトは2026-07-26に使用禁止となりました。\n"
+        "生成していた『追加で聞いた話』は random.seed(slug) による作り話で、\n"
+        "「送金額は最初の段階で約N万円」は loss_amount_yen÷6 の計算値、\n"
+        "流入チャネルも本文と矛盾したまま『◯さん本人談』と署名されていました。\n"
+        "全23本を scripts/strip-generated-details.py で撤去済みです。\n"
+        "取材事実に基づく『追加で聞いた話』は記事ごとに手書きしてください。"
+    )
     count = 0
     for jf in sorted(glob.glob(str(ROOT / "approved" / "draft-*.json"))):
         if process(jf):
